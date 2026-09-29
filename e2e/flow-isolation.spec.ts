@@ -142,3 +142,29 @@ test("parallel confirmations store once and browser Back cannot replace the revi
   await expect(page.getByText("Ihr Widerruf ist eingegangen.")).toBeVisible();
   expect(count()).toBe(before + 2);
 });
+
+test("Unicode code points within server limits are not silently truncated by the browser", async ({
+  page,
+}) => {
+  await page.goto("/withdrawal");
+  const name = "𠮷".repeat(200);
+  const reference = `ORDER ${"🧥".repeat(1200)}`;
+  await page.locator("[name=name]").fill(name);
+  await page.locator("[name=contractReference]").fill(reference);
+  await page.locator("[name=email]").fill("unicode-length@example.test");
+  expect([...(await page.locator("[name=name]").inputValue())].length).toBe(200);
+  expect([...(await page.locator("[name=contractReference]").inputValue())].length).toBe(1206);
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
+});
+
+test("overlong pasted details are preserved for an explicit validation error", async ({ page }) => {
+  await page.goto("/withdrawal");
+  await page.locator("[name=name]").fill("x".repeat(256));
+  await page.locator("[name=contractReference]").fill("y".repeat(2001));
+  await page.locator("[name=email]").fill("length@example.test");
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  expect((await page.locator("[name=name]").inputValue()).length).toBe(256);
+  expect((await page.locator("[name=contractReference]").inputValue()).length).toBe(2001);
+});

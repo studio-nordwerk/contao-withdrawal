@@ -72,7 +72,7 @@ test("footer, two steps, immediate mails and idempotency", async ({ page, reques
     const mail = JSON.stringify(await response.json());
     expect(mail).toContain("Ada E2E");
     expect(mail).toContain("ORDER-E2E-123");
-    expect(mail).toMatch(/\d{2}\.\d{2}\.2026 \d{2}:\d{2}:\d{2}/);
+    expect(mail).toMatch(/\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}/);
   }
 
   await page.reload();
