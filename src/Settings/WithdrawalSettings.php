@@ -17,12 +17,13 @@ final readonly class WithdrawalSettings
      */
     public function stored(): array
     {
-        $row = $this->connection->fetchAssociative('SELECT merchantEmail, path, baseStylesEnabled FROM tl_withdrawal_settings WHERE id = 1');
+        $row = $this->connection->fetchAssociative('SELECT * FROM tl_withdrawal_settings WHERE id = 1');
 
         return false === $row ? ['merchantEmail' => '', 'path' => '/withdrawal', 'baseStylesEnabled' => true] : [
             'merchantEmail' => (string) $row['merchantEmail'],
             'path' => (string) $row['path'],
-            'baseStylesEnabled' => '1' === (string) $row['baseStylesEnabled'],
+            // Until the database migration has added the column, the base styling stays on.
+            'baseStylesEnabled' => !\array_key_exists('baseStylesEnabled', $row) || '1' === (string) $row['baseStylesEnabled'],
         ];
     }
 
@@ -55,12 +56,20 @@ final readonly class WithdrawalSettings
             throw new \InvalidArgumentException('Bitte eine gültige Händleradresse eingeben.');
         }
         self::assertPath($path);
-        $data = ['tstamp' => time(), 'merchantEmail' => $email, 'path' => $path, 'baseStylesEnabled' => $baseStylesEnabled ? '1' : ''];
+        $data = ['tstamp' => time(), 'merchantEmail' => $email, 'path' => $path];
+        if ($this->hasStylesColumn()) {
+            $data['baseStylesEnabled'] = $baseStylesEnabled ? '1' : '';
+        }
         if ($this->connection->fetchOne('SELECT id FROM tl_withdrawal_settings WHERE id = 1')) {
             $this->connection->update('tl_withdrawal_settings', $data, ['id' => 1]);
         } else {
             $this->connection->insert('tl_withdrawal_settings', ['id' => 1, ...$data]);
         }
+    }
+
+    private function hasStylesColumn(): bool
+    {
+        return $this->connection->createSchemaManager()->introspectTable('tl_withdrawal_settings')->hasColumn('baseStylesEnabled');
     }
 
     private static function assertPath(string $path): void
