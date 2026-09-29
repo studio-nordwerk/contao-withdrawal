@@ -11,7 +11,9 @@ use Contao\Input;
 use Contao\System;
 use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 
-/** @property BackendTemplate $Template */
+/**
+ * @property BackendTemplate $Template
+ */
 final class SettingsModule extends BackendModule
 {
     protected $strTemplate = 'be_withdrawal_settings';

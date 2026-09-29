@@ -14,6 +14,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\TransportInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\RawMessage;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -91,9 +92,11 @@ final class MailRetryTest extends TestCase
         $tester = new CommandTester($command);
         $this->assertSame(0, $tester->execute([]));
         $this->assertCount(2, $working->sent);
+
         foreach ($working->sent as $message) {
-            $this->assertInstanceOf(\Symfony\Component\Mime\Email::class, $message);
+            $this->assertInstanceOf(Email::class, $message);
             $this->assertStringContainsString('<table', (string) $message->getHtmlBody());
+
             foreach (array_filter(array_map('trim', explode("\n", (string) $message->getTextBody()))) as $line) {
                 $this->assertStringContainsString($line, html_entity_decode(strip_tags((string) $message->getHtmlBody()), ENT_QUOTES | ENT_HTML5));
             }

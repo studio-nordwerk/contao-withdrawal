@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Nordwerk\WithdrawalBundle\InsertTag;
 
-use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsInsertTag;
 use Contao\CoreBundle\InsertTag\InsertTagResult;
 use Contao\CoreBundle\InsertTag\OutputType;
 use Contao\CoreBundle\InsertTag\ResolvedInsertTag;
 use Contao\CoreBundle\InsertTag\Resolver\InsertTagResolverNestedResolvedInterface;
+use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsInsertTag('withdrawal_link')]

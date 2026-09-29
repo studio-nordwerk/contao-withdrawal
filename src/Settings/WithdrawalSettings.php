@@ -12,7 +12,9 @@ final readonly class WithdrawalSettings
     {
     }
 
-    /** @return array{merchantEmail: string, path: string} */
+    /**
+     * @return array{merchantEmail: string, path: string}
+     */
     public function stored(): array
     {
         $row = $this->connection->fetchAssociative('SELECT merchantEmail, path FROM tl_withdrawal_settings WHERE id = 1');
