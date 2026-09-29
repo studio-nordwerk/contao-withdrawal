@@ -1,0 +1,13 @@
+Hello Ada Beispiel,
+
+a withdrawal has been received.
+
+Fixed booking or contract details (sample)
+Reference: MS-000123
+Received: 15 October 2026, 10:30
+Provider: Nordwerk, Sample Street 1, 12345 Berlin
+Withdrawal notice and form: version at contract conclusion
+
+Please contact us if you have any questions.
+
+Kind regards

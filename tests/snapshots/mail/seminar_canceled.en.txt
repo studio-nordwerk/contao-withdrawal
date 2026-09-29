@@ -1,0 +1,16 @@
+Hello Ada Beispiel,
+
+your booking has been canceled.
+
+Sample product or event | 2 × 25,00 € | 50,00 €
+Total: 50,00 €
+
+Fixed booking or contract details (sample)
+Reference: MS-000123
+Received: 15 October 2026, 10:30
+Provider: Nordwerk, Sample Street 1, 12345 Berlin
+Withdrawal notice and form: version at contract conclusion
+
+Please contact us if you have any questions.
+
+Kind regards
