@@ -12,7 +12,9 @@ use Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer;
 use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -40,9 +42,31 @@ final class MailConcurrencyTest extends TestCase
         $this->connection->close();
     }
 
+    public function testSynchronousTransportRejectionCannotBeMarkedSent(): void
+    {
+        $transport = $this->createMock(TransportInterface::class);
+        $transport
+            ->expects($this->exactly(2))
+            ->method('send')
+            ->willReturn(null)
+        ;
+        $row = $this->repository->find($this->id);
+        $this->assertNotNull($row);
+
+        try {
+            (new WithdrawalMailer($transport, $this->twig, $this->repository, 'shop@example.test'))->sendPending($row);
+            $this->fail('A rejected message must remain pending.');
+        } catch (\RuntimeException) {
+            $stored = $this->repository->find($this->id);
+            $this->assertNotNull($stored);
+            $this->assertSame('pending', $stored['mailStatus']);
+            $this->assertNull($stored['confirmationSentAt']);
+        }
+    }
+
     public function testRetryCommandDoesNotPrintTransportPersonalData(): void
     {
-        $transport = $this->createMock(MailerInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $transport
             ->method('send')
             ->willThrowException(new \RuntimeException('Rejected ada@example.test; AUTH secret; NAME Ada'))
@@ -57,17 +81,19 @@ final class MailConcurrencyTest extends TestCase
 
     public function testRejectedConsumerAddressDoesNotBlockMerchantAndRetrySkipsMerchant(): void
     {
-        $transport = $this->createMock(MailerInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $attempts = [];
         $transport
             ->method('send')
             ->willReturnCallback(
-                static function (Email $email) use (&$attempts): void {
+                static function (Email $email) use (&$attempts): SentMessage {
                     $recipient = $email->getTo()[0]->getAddress();
                     $attempts[] = $recipient;
                     if ('ada@example.test' === $recipient) {
                         throw new \RuntimeException('Mailbox rejected');
                     }
+
+                    return new SentMessage($email, Envelope::create($email));
                 },
             )
         ;
@@ -94,10 +120,11 @@ final class MailConcurrencyTest extends TestCase
 
     public function testStalePendingSnapshotDoesNotSendAgain(): void
     {
-        $transport = $this->createMock(MailerInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $transport
             ->expects($this->exactly(2))
             ->method('send')
+            ->willReturnCallback(static fn (Email $email): SentMessage => new SentMessage($email, Envelope::create($email)))
         ;
         $mailer = new WithdrawalMailer($transport, $this->twig, $this->repository, 'shop@example.test');
         $row = $this->repository->find($this->id);
@@ -110,21 +137,23 @@ final class MailConcurrencyTest extends TestCase
     {
         $otherConnection = DriverManager::getConnection($this->connection->getParams());
         $otherRepository = new WithdrawalRepository($otherConnection);
-        $otherTransport = $this->createMock(MailerInterface::class);
+        $otherTransport = $this->createMock(TransportInterface::class);
         $otherTransport
             ->expects($this->never())
             ->method('send')
         ;
         $otherMailer = new WithdrawalMailer($otherTransport, $this->twig, $otherRepository, 'shop@example.test');
-        $transport = $this->createMock(MailerInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $transport
             ->expects($this->exactly(2))
             ->method('send')
             ->willReturnCallback(
-                function () use ($otherMailer): void {
+                function (Email $email) use ($otherMailer): SentMessage {
                     $row = $this->repository->find($this->id);
                     $this->assertNotNull($row);
                     $otherMailer->sendPending($row);
+
+                    return new SentMessage($email, Envelope::create($email));
                 },
             )
         ;

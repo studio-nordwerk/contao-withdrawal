@@ -12,7 +12,8 @@ use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\RawMessage;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -39,8 +40,13 @@ final class MailRetryTest extends TestCase
         $loader->addPath(__DIR__.'/../templates', 'NordwerkWithdrawal');
         $twig = new Environment($loader);
 
-        $failing = new class() implements MailerInterface {
-            public function send(RawMessage $message, Envelope|null $envelope = null): void
+        $failing = new class() implements TransportInterface {
+            public function __toString(): string
+            {
+                return 'test://';
+            }
+
+            public function send(RawMessage $message, Envelope|null $envelope = null): SentMessage
             {
                 throw new \RuntimeException('SMTP unavailable');
             }
@@ -62,15 +68,22 @@ final class MailRetryTest extends TestCase
         $this->assertSame('pending', $row['mailStatus']);
         $this->assertNull($row['confirmationSentAt']);
 
-        $working = new class() implements MailerInterface {
+        $working = new class() implements TransportInterface {
             /**
              * @var list<RawMessage>
              */
             public array $sent = [];
 
-            public function send(RawMessage $message, Envelope|null $envelope = null): void
+            public function __toString(): string
+            {
+                return 'test://';
+            }
+
+            public function send(RawMessage $message, Envelope|null $envelope = null): SentMessage
             {
                 $this->sent[] = $message;
+
+                return new SentMessage($message, $envelope ?? Envelope::create($message));
             }
         };
 
