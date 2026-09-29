@@ -23,6 +23,7 @@
 - [x] Optionale Grundgestaltung `withdrawal-base.css` mit den gemeinsamen Design-Tokens (`--nw-*`), im Backend abschaltbar, mit Hell/Dunkel-Test der berechneten Radien und Höhen ([Design-Tokens](design-tokens.md)).
 - [x] Der Titel der Funktion ist jetzt eine `h1` (vorher `h2`), damit die Seite eine Überschrift der obersten Ebene hat.
 - [x] E2E-Test, dass `/` bei jeder Browsersprache auf die Startseite führt.
+- [x] Einstellungen und Fußzeilen-Link laufen auch vor der Datenbankmigration weiter (die neue Spalte `baseStylesEnabled` ist optional). `make check` lokal grün: 24 PHP-Tests, 26 Browser-Tests; GitHub Actions in dev und prod grün.
 
 ## Veröffentlichung
 
