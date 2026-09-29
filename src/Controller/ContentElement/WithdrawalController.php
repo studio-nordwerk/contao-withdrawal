@@ -35,7 +35,11 @@ final class WithdrawalController extends AbstractContentElementController
     {
         $receivedAt = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $session = $request->getSession();
-        $key = 'withdrawal_flow_'.$model->id;
+        $flowId = (string) $request->request->get('withdrawal_flow', '');
+        if (!preg_match('/^[a-f0-9]{64}$/D', $flowId)) {
+            $flowId = bin2hex(random_bytes(32));
+        }
+        $key = 'withdrawal_flow_'.$model->id.'_'.$flowId;
         /** @var array<string, mixed> $flow */
         $flow = $session->get($key, []);
         $stage = 'form';
@@ -45,7 +49,13 @@ final class WithdrawalController extends AbstractContentElementController
         if ('POST' === $request->getMethod() && (string) $request->request->get('withdrawal_element') === (string) $model->id) {
             $action = (string) $request->request->get('withdrawal_action');
 
-            if ('review' === $action) {
+            if (isset($flow['id'])) {
+                $row = $this->repository->find((int) $flow['id']);
+                if (null !== $row) {
+                    $stage = 'success';
+                    $template->set('submittedAt', new \DateTimeImmutable((string) $row['submittedAt']));
+                }
+            } elseif ('review' === $action) {
                 $values = [
                     'name' => trim((string) $request->request->get('name')),
                     'contractReference' => trim((string) $request->request->get('contractReference')),
@@ -58,7 +68,10 @@ final class WithdrawalController extends AbstractContentElementController
                 }
 
                 if ([] === $errors) {
-                    $flow = ['token' => bin2hex(random_bytes(32)), 'values' => $values, 'startedAt' => $flow['startedAt']];
+                    // A new immutable snapshot also protects an older review after Back/Edit.
+                    $flowId = bin2hex(random_bytes(32));
+                    $key = 'withdrawal_flow_'.$model->id.'_'.$flowId;
+                    $flow = ['token' => $flowId, 'values' => $values, 'startedAt' => $flow['startedAt']];
                     $session->set($key, $flow);
                     $stage = 'review';
                 }
@@ -124,6 +137,7 @@ final class WithdrawalController extends AbstractContentElementController
         $template->set('errors', $errors);
         $template->set('token', $this->csrfTokenManager->getDefaultTokenValue());
         $template->set('elementId', $model->id);
+        $template->set('flowId', $flowId);
 
         return $template->getResponse();
     }

@@ -57,6 +57,7 @@ test("footer, two steps, immediate mails and idempotency", async ({ page, reques
   expect((await messages(request)).total).toBe(mailBefore);
 
   const csrf = await page.locator("input[name=REQUEST_TOKEN]").inputValue();
+  const flow = await page.locator("input[name=withdrawal_flow]").inputValue();
   const element = await page.locator("input[name=withdrawal_element]").inputValue();
   await page.getByRole("button", { name: "Widerruf bestätigen" }).click();
   await expect(page.getByText("Ihr Widerruf ist eingegangen.")).toBeVisible();
@@ -78,7 +79,12 @@ test("footer, two steps, immediate mails and idempotency", async ({ page, reques
   expect(countRecords()).toBe(before + 1);
   expect((await messages(request)).total).toBe(mailBefore + 2);
   const repeated = await page.request.post("http://127.0.0.1:8081/withdrawal", {
-    form: { REQUEST_TOKEN: csrf, withdrawal_element: element, withdrawal_action: "confirm" },
+    form: {
+      REQUEST_TOKEN: csrf,
+      withdrawal_element: element,
+      withdrawal_action: "confirm",
+      withdrawal_flow: flow,
+    },
   });
   expect(repeated.ok()).toBeTruthy();
   expect(countRecords()).toBe(before + 1);
