@@ -33,10 +33,26 @@ jobs:
           PY
       - name: Start isolated demo and install dependencies
         run: make up
+      - name: Verify seeded frontend
+        run: |
+          curl --silent --show-error --dump-header /tmp/withdrawal-headers --output /tmp/withdrawal-page http://127.0.0.1:8081/withdrawal
+          cat /tmp/withdrawal-headers
+          if ! grep -q 'name="name"' /tmp/withdrawal-page; then
+            head -c 4000 /tmp/withdrawal-page
+            docker compose logs --tail=100 php caddy
+            exit 1
+          fi
       - name: Install browser system libraries
         run: vp exec playwright install --with-deps chromium
       - name: Check
         run: make check
+      - name: Upload Playwright error context
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-error-context-${{ matrix.environment }}
+          path: test-results/**/error-context.md
+          if-no-files-found: ignore
       - name: Stop this demo
         if: always()
         run: docker compose down
