@@ -23,6 +23,7 @@ final class WithdrawalDeclarationTest extends TestCase
     public function testUnicodeAddressesAndNamesAreAcceptedWithoutDnsLookup(): void
     {
         $this->assertSame([], WithdrawalDeclaration::validate('李 Müller', 'Teil: Größe 🧥', 'kunde@bücher.example'));
+        $this->assertSame([], WithdrawalDeclaration::validate('李 Müller', 'Teil: Größe 🧥', '用户@example.test'));
     }
 
     public function testInvisibleEmptyInputAndControlCharactersAreRejected(): void

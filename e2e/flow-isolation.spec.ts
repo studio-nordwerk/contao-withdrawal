@@ -168,3 +168,12 @@ test("overlong pasted details are preserved for an explicit validation error", a
   expect((await page.locator("[name=name]").inputValue()).length).toBe(256);
   expect((await page.locator("[name=contractReference]").inputValue()).length).toBe(2001);
 });
+
+test("international email local parts can reach the review step", async ({ page }) => {
+  await page.goto("/withdrawal");
+  await page.locator("[name=name]").fill("Unicode Mail");
+  await page.locator("[name=contractReference]").fill("INTERNATIONAL-EMAIL");
+  await page.locator("[name=email]").fill("用户@example.test");
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
+});
