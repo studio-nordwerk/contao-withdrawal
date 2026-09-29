@@ -26,8 +26,10 @@ final class SettingsModule extends BackendModule
         $error = '';
         if ('POST' === ($_SERVER['REQUEST_METHOD'] ?? '')) {
             try {
-                $email = trim((string) Input::post('merchantEmail'));
-                $path = trim((string) Input::post('path'));
+                $emailInput = Input::post('merchantEmail');
+                $pathInput = Input::post('path');
+                $email = \is_string($emailInput) ? trim($emailInput) : '';
+                $path = \is_string($pathInput) ? trim($pathInput) : '';
                 $settings->save($email, $path);
                 Controller::redirect('contao?do=withdrawal_settings&saved=1');
             } catch (\InvalidArgumentException $exception) {

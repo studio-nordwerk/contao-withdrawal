@@ -2,6 +2,29 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
+test("backend withdrawal settings control the public link without environment variables", async ({ page }) => {
+  const env = readFileSync(".env", "utf8");
+  await page.goto("/contao?do=withdrawal_settings");
+  await page.locator("[name=username]").fill(env.match(/^CONTAO_ADMIN_EMAIL=(.*)$/m)![1]);
+  await page.locator("[name=password]").fill(env.match(/^CONTAO_ADMIN_PASSWORD=(.*)$/m)![1]);
+  await page.locator("button[type=submit],input[type=submit]").first().click();
+  await page.goto("/contao?do=withdrawal_settings");
+  const email = await page.locator("#ctrl_merchantEmail").inputValue();
+  const path = await page.locator("#ctrl_path").inputValue();
+  try {
+    await page.locator("#ctrl_path").fill("/service/widerruf");
+    await page.getByRole("button", { name: "Speichern" }).click();
+    await expect(page.getByText("Einstellungen gespeichert.")).toBeVisible();
+    await page.goto("/home");
+    await expect(page.getByRole("link", { name: "Vertrag widerrufen" })).toHaveAttribute("href", "/service/widerruf");
+  } finally {
+    await page.goto("/contao?do=withdrawal_settings");
+    await page.locator("#ctrl_merchantEmail").fill(email);
+    await page.locator("#ctrl_path").fill(path);
+    await page.getByRole("button", { name: "Speichern" }).click();
+  }
+});
+
 test("untrusted declaration markup is text in frontend and backend", async ({ page }) => {
   const payload = '<img src="x" data-withdrawal-injection="yes">';
   await page.goto("/withdrawal");
