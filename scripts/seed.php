@@ -87,6 +87,8 @@ try {
         'useSSL' => 0,
         'includeLayout' => 1,
         'layout' => $layoutId,
+        'includeCache' => 1,
+        'cache' => 300,
     ]);
     $rootId = (int) $db->lastInsertId();
 

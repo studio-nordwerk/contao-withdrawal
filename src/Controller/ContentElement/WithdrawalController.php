@@ -144,6 +144,9 @@ final class WithdrawalController extends AbstractContentElementController
         $template->set('flowId', $flowId);
         $template->set('formUrl', '/'.ltrim($request->getRequestUri(), '/'));
 
-        return $template->getResponse();
+        $response = $template->getResponse();
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
     }
 }

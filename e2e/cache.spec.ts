@@ -14,3 +14,21 @@ test("personal forms explicitly forbid storage by browsers and proxies", async (
   expect(await second.locator("[name=withdrawal_flow]").inputValue()).not.toBe(first);
   await secondContext.close();
 });
+
+test("footer survives repeated page cache requests and ESI-capable proxies", async ({
+  request,
+}) => {
+  for (const path of ["/home", "/kontakt"]) {
+    for (let i = 0; i < 2; ++i) {
+      const response = await request.get(path, {
+        headers: { "Surrogate-Capability": 'audit="ESI/1.0"' },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect(await response.text()).toContain('class="withdrawal-link" href="/withdrawal"');
+      if (process.env.APP_ENV === "prod") {
+        expect(response.headers()["cache-control"]).toContain("public");
+        expect(response.headers()["cache-control"]).toContain("s-maxage=300");
+      }
+    }
+  }
+});
