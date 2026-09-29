@@ -10,12 +10,14 @@
   --nw-border: color-mix(in srgb, currentColor 24%, transparent);
   --nw-field-border: color-mix(in srgb, currentColor 58%, transparent);
   --nw-focus: currentColor;
+  --nw-attention: currentColor;
   --nw-focus-width: 3px;
   --nw-focus-offset: 3px;
   --nw-border-width: 1px;
   --nw-radius-control: 0.75rem;
   --nw-radius-card: 1.125rem;
   --nw-control-height: 2.75rem;
+  --nw-field-width: 32rem;
   --nw-font-size: 1rem;
   --nw-font-size-small: 0.9rem;
   --nw-space-xs: 0.5rem;
@@ -57,6 +59,12 @@
   outline-offset: var(--nw-focus-offset);
 }
 
+/* Headings and messages that only take the focus when the page changes are no controls: no ring. */
+.withdrawal h1[tabindex="-1"]:focus-visible,
+.withdrawal [role="alert"][tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
 .withdrawal__field {
   display: grid;
   gap: 0.35rem;
@@ -71,7 +79,7 @@
 .withdrawal input:not([type="hidden"]),
 .withdrawal textarea {
   display: block;
-  width: 100%;
+  width: min(100%, var(--nw-field-width));
   min-height: var(--nw-control-height);
   padding: 0.5rem 0.75rem;
   border: var(--nw-border-width) solid var(--nw-field-border);

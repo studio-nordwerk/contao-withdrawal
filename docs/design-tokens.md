@@ -6,27 +6,29 @@ Jedes Bundle bringt sinnvolle Standardwerte mit und funktioniert damit allein. E
 
 ## Die Tokens
 
-| Token                  | Wirkung                                                   | Standard                                   |
-| ---------------------- | --------------------------------------------------------- | ------------------------------------------ |
-| `--nw-accent`          | Hauptfarbe: Buttons, Auswahl, Hervorhebungen              | `currentColor`                             |
-| `--nw-accent-contrast` | Textfarbe auf `--nw-accent` (Hauptbutton)                 | `Canvas`                                   |
-| `--nw-surface`         | Hintergrund von Feldern, Karten und Hinweisen             | `transparent`                              |
-| `--nw-border`          | Linien und Kartenrahmen (dekorativ)                       | `color-mix(currentColor 24%, transparent)` |
-| `--nw-field-border`    | Rahmen von Eingabefeldern, mindestens 3:1 zum Hintergrund | `color-mix(currentColor 58%, transparent)` |
-| `--nw-focus`           | Farbe des Fokusrings                                      | `currentColor`                             |
-| `--nw-focus-width`     | Stärke des Fokusrings                                     | `3px`                                      |
-| `--nw-focus-offset`    | Abstand des Fokusrings                                    | `3px`                                      |
-| `--nw-border-width`    | Rahmenstärke von Buttons und Feldern                      | `1px`                                      |
-| `--nw-radius-control`  | Radius von Buttons **und** Feldern (derselbe Wert)        | `0.75rem`                                  |
-| `--nw-radius-card`     | Radius von Karten, Bildern, Boxen und Hinweisen           | `1.125rem`                                 |
-| `--nw-control-height`  | Mindesthöhe von Buttons und einzeiligen Feldern           | `2.75rem`                                  |
-| `--nw-font-size`       | Schriftgröße in Buttons und Feldern                       | `1rem`                                     |
-| `--nw-font-size-small` | Schriftgröße von Beschriftungen, Hinweisen und Bildtexten | `0.9rem`                                   |
-| `--nw-space-xs`        | kleinster Abstand (Bildergalerie, Beschriftung)           | `0.5rem`                                   |
-| `--nw-space-sm`        | Abstand zwischen Feldern und Absätzen                     | `0.75rem`                                  |
-| `--nw-space-md`        | Lücke zwischen Karten und Spalten                         | `1.25rem`                                  |
-| `--nw-space-lg`        | Innenabstand von Karten und Boxen                         | `1.5rem`                                   |
-| `--nw-space-xl`        | großer Abstand zwischen Abschnitten                       | `2.5rem`                                   |
+| Token                  | Wirkung                                                     | Standard                                   |
+| ---------------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| `--nw-accent`          | Hauptfarbe: Buttons, Auswahl, Hervorhebungen                | `currentColor`                             |
+| `--nw-accent-contrast` | Textfarbe auf `--nw-accent` (Hauptbutton)                   | `Canvas`                                   |
+| `--nw-surface`         | Hintergrund von Feldern, Karten und Hinweisen               | `transparent`                              |
+| `--nw-border`          | Linien und Kartenrahmen (dekorativ)                         | `color-mix(currentColor 24%, transparent)` |
+| `--nw-field-border`    | Rahmen von Eingabefeldern, mindestens 3:1 zum Hintergrund   | `color-mix(currentColor 58%, transparent)` |
+| `--nw-focus`           | Farbe des Fokusrings                                        | `currentColor`                             |
+| `--nw-attention`       | Farbe für Hinweise wie „Nur noch 3 verfügbar“ (mind. 4,5:1) | `currentColor`                             |
+| `--nw-focus-width`     | Stärke des Fokusrings                                       | `3px`                                      |
+| `--nw-focus-offset`    | Abstand des Fokusrings                                      | `3px`                                      |
+| `--nw-border-width`    | Rahmenstärke von Buttons und Feldern                        | `1px`                                      |
+| `--nw-radius-control`  | Radius von Buttons **und** Feldern (derselbe Wert)          | `0.75rem`                                  |
+| `--nw-radius-card`     | Radius von Karten, Bildern, Boxen und Hinweisen             | `1.125rem`                                 |
+| `--nw-control-height`  | Mindesthöhe von Buttons und einzeiligen Feldern             | `2.75rem`                                  |
+| `--nw-field-width`     | Höchstbreite von Eingabefeldern                             | `32rem`                                    |
+| `--nw-font-size`       | Schriftgröße in Buttons und Feldern                         | `1rem`                                     |
+| `--nw-font-size-small` | Schriftgröße von Beschriftungen, Hinweisen und Bildtexten   | `0.9rem`                                   |
+| `--nw-space-xs`        | kleinster Abstand (Bildergalerie, Beschriftung)             | `0.5rem`                                   |
+| `--nw-space-sm`        | Abstand zwischen Feldern und Absätzen                       | `0.75rem`                                  |
+| `--nw-space-md`        | Lücke zwischen Karten und Spalten                           | `1.25rem`                                  |
+| `--nw-space-lg`        | Innenabstand von Karten und Boxen                           | `1.5rem`                                   |
+| `--nw-space-xl`        | großer Abstand zwischen Abschnitten                         | `2.5rem`                                   |
 
 Schrift und Textfarbe übernehmen die Bundles von der Website (`font: inherit`, `color: inherit`). Eine eigene Schrift gehört ins Theme, nicht in die Tokens.
 
