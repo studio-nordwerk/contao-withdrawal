@@ -16,6 +16,7 @@
 - [x] Widerrufsbestätigung als überschreibbare Multipart-Twig-Mail mit unverändertem Textteil und schlichtem HTML-Teil.
 - [x] Händleradresse und öffentlicher Pfad im Backend einstellbar; Umgebungsvariablen bleiben optionale Overrides. Browser- und Injection-Tests grün.
 - [x] `make check` lokal grün (23 PHP-Tests, 20 Browser-Tests).
+- [x] Politur-Commits bis `4982507` auf `main` gepusht; GitHub Actions für Dev und Prod grün.
 
 ## Veröffentlichung
 
@@ -34,4 +35,4 @@
 
 Abschluss: Beide frischen Prüfläufe (dev/prod) grün mit 22 PHP-Tests / 135 Assertions und 19 Browsertests. Befunde und Ausgaben: [Auditbericht](audit.md).
 
-Es wurde kein Remote angelegt und nichts gepusht.
+Beim ursprünglichen Audit wurde noch kein Remote angelegt oder Push ausgeführt. Die Politur-Runde wurde anschließend auf `main` veröffentlicht.
