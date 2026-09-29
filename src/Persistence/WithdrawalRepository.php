@@ -58,6 +58,29 @@ final readonly class WithdrawalRepository
         return $this->connection->fetchAllAssociative("SELECT * FROM tl_withdrawal WHERE mailStatus <> 'sent' ORDER BY id ASC");
     }
 
+    /**
+     * @param callable(array<string, mixed>): void $send
+     */
+    public function withMailLock(int $id, callable $send): void
+    {
+        // Connection-scoped MySQL/MariaDB locks are shared across web/cron hosts and
+        // released by the database if a worker dies. Never wait in the form.
+        $key = 'withdrawal:'.hash('sha256', $this->connection->getDatabase().':'.$id);
+        $key = substr($key, 0, 64);
+        if (1 !== (int) $this->connection->fetchOne('SELECT GET_LOCK(?, 0)', [$key])) {
+            return;
+        }
+
+        try {
+            $row = $this->find($id);
+            if (null !== $row) {
+                $send($row);
+            }
+        } finally {
+            $this->connection->fetchOne('SELECT RELEASE_LOCK(?)', [$key]);
+        }
+    }
+
     public function markSent(int $id, string $column, \DateTimeImmutable $at): void
     {
         if (!\in_array($column, ['confirmationSentAt', 'merchantSentAt'], true)) {

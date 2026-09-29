@@ -24,6 +24,14 @@ final readonly class WithdrawalMailer
      */
     public function sendPending(array $row): void
     {
+        $this->repository->withMailLock((int) $row['id'], $this->deliver(...));
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function deliver(array $row): void
+    {
         $data = [
             'name' => (string) $row['consumerName'],
             'contractReference' => (string) $row['contractReference'],
