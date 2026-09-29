@@ -69,3 +69,12 @@ test("an autofilled honeypot can be recovered without hidden field access", asyn
   await page.getByRole("button", { name: "Angaben prüfen" }).click();
   await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
 });
+
+test("Unicode email domains can pass browser and server validation", async ({ page }) => {
+  await page.goto("/withdrawal");
+  await page.locator("[name=name]").fill("李 Müller");
+  await page.locator("[name=contractReference]").fill("Teil: Größe 🧥");
+  await page.locator("[name=email]").fill("kunde@bücher.example");
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
+});
