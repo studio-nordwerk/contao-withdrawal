@@ -3,4 +3,6 @@ CTE:
     - Withdrawal function
     - Two-step withdrawal without login
 MOD:
-  withdrawals: Withdrawals
+  withdrawals:
+    - Withdrawals
+    - Review received withdrawal declarations

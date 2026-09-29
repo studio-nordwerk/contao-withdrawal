@@ -3,4 +3,6 @@ CTE:
     - Widerrufsfunktion
     - Zweistufiger Widerruf ohne Anmeldung
 MOD:
-  withdrawals: Widerrufe
+  withdrawals:
+    - Widerrufe
+    - Eingegangene Widerrufserklärungen prüfen
