@@ -85,14 +85,10 @@ final class WithdrawalController extends AbstractContentElementController
                     $stored = $flow['values'];
                     $declaration = new WithdrawalDeclaration($stored['name'], $stored['contractReference'], $stored['email']);
 
+                    $id = null;
+
                     try {
                         $id = $this->repository->create($token, $declaration, $receivedAt, $request->getLocale());
-
-                        try {
-                            $this->events->dispatch(new WithdrawalSubmittedEvent($id, $declaration, $receivedAt));
-                        } catch (\Throwable $exception) {
-                            $this->logger->error('Withdrawal event listener failed.', ['failure_type' => $exception::class, 'withdrawal' => $id]);
-                        }
                     } catch (UniqueConstraintViolationException) {
                         // A concurrent confirmation already created this declaration.
                     }
@@ -104,6 +100,14 @@ final class WithdrawalController extends AbstractContentElementController
                             $this->mailer->sendPending($row);
                         } catch (\Throwable $exception) {
                             $this->logger->error('Withdrawal mail delivery failed.', ['failure_type' => $exception::class, 'withdrawal' => $row['id']]);
+                        }
+                    }
+
+                    if (null !== $id) {
+                        try {
+                            $this->events->dispatch(new WithdrawalSubmittedEvent($id, $declaration, $receivedAt));
+                        } catch (\Throwable $exception) {
+                            $this->logger->error('Withdrawal event listener failed.', ['failure_type' => $exception::class, 'withdrawal' => $id]);
                         }
                     }
                 }
