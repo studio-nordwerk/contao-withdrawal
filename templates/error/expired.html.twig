@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta name="robots" content="noindex">
+        <title>{{ 'withdrawal.title'|trans }}</title>
+    </head>
+    <body>
+        <main>
+            <h1 tabindex="-1" autofocus>{{ 'withdrawal.title'|trans }}</h1>
+            <p>{{ 'withdrawal.expired'|trans }}</p>
+            <p><a href="{{ formUrl }}">{{ 'withdrawal.reload'|trans }}</a></p>
+        </main>
+    </body>
+</html>

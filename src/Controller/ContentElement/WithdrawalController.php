@@ -120,6 +120,8 @@ final class WithdrawalController extends AbstractContentElementController
                     $stage = 'success';
                     $template->set('submittedAt', (new \DateTimeImmutable((string) $row['submittedAt'], new \DateTimeZone('UTC')))->setTimezone(new \DateTimeZone('Europe/Berlin')));
                 }
+            } else {
+                $errors['expired'] = 'expired';
             }
         } elseif ('done' === $request->query->get('withdrawal') && isset($flow['id'])) {
             $row = $this->repository->find((int) $flow['id']);

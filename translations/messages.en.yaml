@@ -18,3 +18,5 @@ withdrawal:
     name: "Please enter a name of at most 255 characters."
     contractReference: "Please enter contract details of at most 2000 characters."
     email: "Please enter a valid email address of at most 255 characters."
+  expired: "Your session has expired or the security check failed. Please reopen the form and review your details before submitting."
+  reload: "Reopen form"

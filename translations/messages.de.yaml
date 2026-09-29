@@ -18,3 +18,5 @@ withdrawal:
     name: "Bitte geben Sie einen Namen mit höchstens 255 Zeichen ein."
     contractReference: "Bitte geben Sie Vertragsangaben mit höchstens 2000 Zeichen ein."
     email: "Bitte geben Sie eine gültige E-Mail-Adresse mit höchstens 255 Zeichen ein."
+  expired: "Ihre Sitzung ist abgelaufen oder die Sicherheitsprüfung ist fehlgeschlagen. Bitte öffnen Sie das Formular erneut und prüfen Sie Ihre Angaben vor dem Absenden."
+  reload: "Formular neu öffnen"
