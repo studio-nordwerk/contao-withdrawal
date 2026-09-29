@@ -13,7 +13,8 @@
   "require": {
     "php": "^8.3",
     "contao/core-bundle": "^5.7",
-    "egulias/email-validator": "^4.0"
+    "egulias/email-validator": "^4.0",
+    "tijsverkoyen/css-to-inline-styles": "^2.4"
   },
   "autoload": {
     "psr-4": {

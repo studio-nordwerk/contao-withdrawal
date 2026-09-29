@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <title>{{ subject|e('html') }}</title>
+    <style>
+        :root { color-scheme: light dark; }
+        .nw-mail-body { margin: 0; padding: 24px 12px; background: #f5f3ef; color: #292723; font: 16px/1.5 Arial, Helvetica, sans-serif; }
+        .nw-mail-card { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e3ded5; }
+        .nw-mail-pad { padding: 24px 28px; }
+        .nw-mail-brand { color: {{ accent }}; font-size: 20px; font-weight: bold; border-bottom: 3px solid {{ accent }}; }
+        .nw-mail-content { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .nw-mail-heading { color: {{ accent }}; font-size: 16px; font-weight: bold; }
+        .nw-mail-preheader { display: none; max-height: 0; overflow: hidden; opacity: 0; }
+        .nw-mail-items { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .nw-mail-items th, .nw-mail-items td { padding: 8px 4px; border-bottom: 1px solid #e3ded5; vertical-align: top; }
+        .nw-mail-items th { text-align: left; }
+        .nw-mail-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .nw-mail-totals { width: 100%; border-collapse: collapse; margin: 8px 0 20px; }
+        .nw-mail-totals td { padding: 3px 4px; text-align: right; font-variant-numeric: tabular-nums; }
+        @media (max-width: 480px) {
+            .nw-mail-pad { padding: 18px 14px !important; }
+            .nw-mail-items thead { display: none !important; }
+            .nw-mail-items tr { display: block !important; border-bottom: 1px solid #e3ded5; }
+            .nw-mail-items td { display: block !important; width: auto !important; border: 0; padding: 2px 4px; text-align: left !important; }
+            .nw-mail-items td::before { content: attr(data-label) ': '; font-weight: bold; }
+        }
+        @media (prefers-color-scheme: dark) {
+            .nw-mail-body { background: #211d22 !important; color: #f6f0f3 !important; }
+            .nw-mail-card { background: #302936 !important; border-color: #716473 !important; }
+            .nw-mail-brand, .nw-mail-heading { color: #f2dce9 !important; }
+            .nw-mail-items td, .nw-mail-items th { border-color: #716473 !important; }
+        }
+    </style>
+</head>
+<body class="nw-mail-body">
+    <div class="nw-mail-preheader" aria-hidden="true">{{ preheader|e('html') }}</div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="nw-mail-card" width="600">
+        <tr><td class="nw-mail-pad nw-mail-brand">{% if logo %}<img src="cid:nw-logo" alt="{{ brand|e('html_attr') }}" style="max-width:180px;max-height:64px;width:auto;height:auto;vertical-align:middle">{% else %}{{ brand|e('html') }}{% endif %}</td></tr>
+        <tr><td class="nw-mail-pad">
+            {% if introduction %}<p class="nw-mail-content">{{ introduction|e('html') }}</p>{% endif %}
+            {% if items %}
+                <table class="nw-mail-items" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <thead><tr><th>{{ locale == 'en' ? 'Product / event' : 'Produkt / Termin' }}</th><th class="nw-mail-num">{{ locale == 'en' ? 'Qty' : 'Menge' }}</th><th class="nw-mail-num">{{ locale == 'en' ? 'Unit price' : 'Stückpreis' }}</th><th class="nw-mail-num">{{ locale == 'en' ? 'Amount' : 'Betrag' }}</th></tr></thead>
+                    <tbody>{% for item in items %}<tr><td data-label="{{ locale == 'en' ? 'Product / event' : 'Produkt / Termin' }}">{{ item.name|e('html') }}</td><td class="nw-mail-num" data-label="{{ locale == 'en' ? 'Qty' : 'Menge' }}">{{ item.quantity|e('html') }}</td><td class="nw-mail-num" data-label="{{ locale == 'en' ? 'Unit price' : 'Stückpreis' }}">{{ item.unit|e('html') }}</td><td class="nw-mail-num" data-label="{{ locale == 'en' ? 'Amount' : 'Betrag' }}">{{ item.amount|e('html') }}</td></tr>{% endfor %}</tbody>
+                </table>
+            {% endif %}
+            {% if totals %}<table role="presentation" class="nw-mail-totals" cellpadding="0" cellspacing="0" border="0" width="100%">{% for total in totals %}<tr><td>{{ total.label|e('html') }}</td><td>{{ total.amount|e('html') }}</td></tr>{% endfor %}</table>{% endif %}
+            {% for section in sections %}<h2 class="nw-mail-heading">{{ section.title|e('html') }}</h2><p class="nw-mail-content">{{ section.text|e('html') }}</p>{% endfor %}
+            {% if closing %}<p class="nw-mail-content">{{ closing|e('html') }}</p>{% endif %}
+            {% if greeting or signature %}<p class="nw-mail-content">{{ greeting|e('html') }}{% if signature %}<br>{{ signature|e('html') }}{% endif %}</p>{% endif %}
+        </td></tr>
+    </table>
+</body>
+</html>

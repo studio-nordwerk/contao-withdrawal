@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nordwerk\WithdrawalBundle\Settings;
 
 use Doctrine\DBAL\Connection;
+use Nordwerk\WithdrawalBundle\Mail\MailOptions;
 
 final readonly class WithdrawalSettings
 {
@@ -30,6 +31,32 @@ final readonly class WithdrawalSettings
     public function baseStylesEnabled(): bool
     {
         return $this->stored()['baseStylesEnabled'];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function mailOptions(): array
+    {
+        $row = $this->connection->fetchAssociative('SELECT * FROM tl_withdrawal_settings WHERE id = 1');
+        $raw = false === $row ? null : ($row['mailOptions'] ?? null);
+        $values = \is_string($raw) && '' !== $raw ? json_decode($raw, true, 512, JSON_THROW_ON_ERROR) : [];
+
+        return MailOptions::validate(\is_array($values) ? $values : [], 'withdrawal');
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function saveMailOptions(array $options): void
+    {
+        $options = MailOptions::validate($options, 'withdrawal');
+        $data = ['tstamp' => time(), 'mailOptions' => json_encode($options, JSON_THROW_ON_ERROR)];
+        if ($this->connection->fetchOne('SELECT id FROM tl_withdrawal_settings WHERE id = 1')) {
+            $this->connection->update('tl_withdrawal_settings', $data, ['id' => 1]);
+        } else {
+            $this->connection->insert('tl_withdrawal_settings', ['id' => 1, 'merchantEmail' => '', 'path' => '/withdrawal', ...$data]);
+        }
     }
 
     public function merchantEmail(): string

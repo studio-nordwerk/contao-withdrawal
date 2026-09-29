@@ -10,5 +10,6 @@ $GLOBALS['TL_DCA']['tl_withdrawal_settings'] = [
         'merchantEmail' => ['sql' => "varchar(255) NOT NULL default ''"],
         'path' => ['sql' => "varchar(255) NOT NULL default '/withdrawal'"],
         'baseStylesEnabled' => ['sql' => "char(1) NOT NULL default '1'"],
+        'mailOptions' => ['sql' => 'longtext NULL'],
     ],
 ];

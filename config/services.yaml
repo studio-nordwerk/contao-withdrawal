@@ -8,6 +8,7 @@ services:
     exclude: "../src/{ContaoManager,DependencyInjection,NordwerkWithdrawalBundle.php}"
 
   Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer:
+    public: true
     arguments:
       $merchantEmail: ""
       $settings: '@Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings'
@@ -18,4 +19,7 @@ services:
       $settings: '@Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings'
 
   Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings:
+    public: true
+
+  Nordwerk\WithdrawalBundle\Mail\MailDocument:
     public: true
