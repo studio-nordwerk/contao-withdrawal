@@ -24,7 +24,8 @@ final readonly class WithdrawalLinkInsertTag implements InsertTagResolverNestedR
     {
         $request = $this->requestStack->getCurrentRequest();
         $label = str_starts_with((string) $request?->getLocale(), 'en') ? 'Withdraw contract' : 'Vertrag widerrufen';
-        $href = rtrim((string) $request?->getBasePath(), '/').'/'.ltrim($this->path, '/');
+        $mainRequest = $this->requestStack->getMainRequest() ?? $request;
+        $href = rtrim((string) $mainRequest?->getBasePath(), '/').'/'.ltrim($this->path, '/');
 
         return new InsertTagResult(\sprintf('<a class="withdrawal-link" href="%s">%s</a>', htmlspecialchars($href, ENT_QUOTES), $label), OutputType::html);
     }
