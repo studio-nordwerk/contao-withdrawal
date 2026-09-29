@@ -13,3 +13,8 @@ withdrawal:
   clock: "(Europe/Berlin)"
   error: "Please check your details and try again."
   spam: "An automatically filled protection field was cleared. Please check your details and choose “Review details” again."
+  edit: Edit details
+  errors:
+    name: "Please enter a name of at most 255 characters."
+    contractReference: "Please enter contract details of at most 2000 characters."
+    email: "Please enter a valid email address of at most 255 characters."

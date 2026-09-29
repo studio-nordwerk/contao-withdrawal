@@ -13,3 +13,8 @@ withdrawal:
   clock: "Uhr (Europe/Berlin)"
   error: "Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut."
   spam: "Ein automatisch ausgefülltes Schutzfeld wurde geleert. Bitte prüfen Sie Ihre Angaben und wählen Sie erneut „Angaben prüfen“."
+  edit: Angaben ändern
+  errors:
+    name: "Bitte geben Sie einen Namen mit höchstens 255 Zeichen ein."
+    contractReference: "Bitte geben Sie Vertragsangaben mit höchstens 2000 Zeichen ein."
+    email: "Bitte geben Sie eine gültige E-Mail-Adresse mit höchstens 255 Zeichen ein."

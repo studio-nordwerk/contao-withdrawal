@@ -56,6 +56,8 @@ final class WithdrawalController extends AbstractContentElementController
                     $stage = 'success';
                     $template->set('submittedAt', new \DateTimeImmutable((string) $row['submittedAt']));
                 }
+            } elseif ('edit' === $action && isset($flow['values'])) {
+                $values = $flow['values'];
             } elseif ('review' === $action) {
                 $values = [
                     'name' => trim((string) $request->request->get('name')),
@@ -138,6 +140,7 @@ final class WithdrawalController extends AbstractContentElementController
         $template->set('token', $this->csrfTokenManager->getDefaultTokenValue());
         $template->set('elementId', $model->id);
         $template->set('flowId', $flowId);
+        $template->set('formUrl', '/'.ltrim($request->getRequestUri(), '/'));
 
         return $template->getResponse();
     }
