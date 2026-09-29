@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Nordwerk\WithdrawalBundle\Mail;
 
-/** The editable envelope of a mail. Contractual information is added separately. */
 final class EditableMail
 {
     public const FIELDS = ['subject', 'preheader', 'introduction', 'closing', 'greeting', 'signature'];
@@ -26,19 +25,25 @@ final class EditableMail
         'withdrawal_merchant' => ['customer.name', 'contract.reference'],
     ];
 
-    /** @return list<string> */
+    /**
+     * @return list<string>
+     */
     public static function kinds(string $bundle): array
     {
         return array_values(array_filter(array_keys(self::TOKENS), static fn (string $kind): bool => str_starts_with($kind, $bundle.'_')));
     }
 
-    /** @return list<string> */
+    /**
+     * @return list<string>
+     */
     public static function tokens(string $kind): array
     {
         return self::TOKENS[$kind] ?? throw new \InvalidArgumentException('Unknown mail type.');
     }
 
-    /** @return array<string, string> */
+    /**
+     * @return array<string, string>
+     */
     public static function defaults(string $kind, string $locale = 'de', string $voice = 'sie'): array
     {
         self::tokens($kind);
@@ -115,11 +120,12 @@ final class EditableMail
     }
 
     /** @param array<string, mixed> $overrides
-     *  @return array<string, string>
+     * @return array<string, string>
      */
     public static function resolve(string $kind, string $locale, string $voice, array $overrides): array
     {
         $fields = self::defaults($kind, $locale, $voice);
+
         foreach ($overrides as $field => $value) {
             if (!\in_array($field, self::FIELDS, true) || !\is_string($value)) {
                 throw new \InvalidArgumentException('Unknown mail field.');
@@ -139,13 +145,17 @@ final class EditableMail
         if (str_contains($value, '{%') || str_contains($value, '{#') || str_contains($value, '#}') || str_contains($value, '%}')) {
             throw new \InvalidArgumentException('Twig code is not allowed in mail fields.');
         }
-        $withoutTokens = preg_replace_callback('/\{\{\s*([^{}]+?)\s*\}\}/u', static function (array $match) use ($kind): string {
-            if (!\in_array(trim($match[1]), self::tokens($kind), true)) {
-                throw new \InvalidArgumentException('Unknown mail placeholder: '.$match[1]);
-            }
+        $withoutTokens = preg_replace_callback(
+            '/\{\{\s*([^{}]+?)\s*\}\}/u',
+            static function (array $match) use ($kind): string {
+                if (!\in_array(trim($match[1]), self::tokens($kind), true)) {
+                    throw new \InvalidArgumentException('Unknown mail placeholder: '.$match[1]);
+                }
 
-            return '';
-        }, $value);
+                return '';
+            },
+            $value,
+        );
         if (null === $withoutTokens || str_contains($withoutTokens, '{{') || str_contains($withoutTokens, '}}')) {
             throw new \InvalidArgumentException('Invalid mail placeholder.');
         }
@@ -154,19 +164,25 @@ final class EditableMail
         }
     }
 
-    /** @param array<string, string> $values */
+    /**
+     * @param array<string, string> $values
+     */
     public static function expand(string $kind, string $field, string $value, array $values): string
     {
         self::validate($kind, $field, $value);
 
-        $expanded = (string) preg_replace_callback('/\{\{\s*([^{}]+?)\s*\}\}/u', static function (array $match) use ($kind, $values): string {
-            $token = trim($match[1]);
-            if (!\array_key_exists($token, $values) || !\in_array($token, self::tokens($kind), true)) {
-                throw new \InvalidArgumentException('Missing mail placeholder value: '.$token);
-            }
+        $expanded = (string) preg_replace_callback(
+            '/\{\{\s*([^{}]+?)\s*\}\}/u',
+            static function (array $match) use ($kind, $values): string {
+                $token = trim($match[1]);
+                if (!\array_key_exists($token, $values) || !\in_array($token, self::tokens($kind), true)) {
+                    throw new \InvalidArgumentException('Missing mail placeholder value: '.$token);
+                }
 
-            return $values[$token];
-        }, $value);
+                return $values[$token];
+            },
+            $value,
+        );
 
         return 'subject' === $field ? self::header($expanded) : $expanded;
     }

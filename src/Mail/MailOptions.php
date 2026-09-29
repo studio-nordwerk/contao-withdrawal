@@ -7,10 +7,11 @@ namespace Nordwerk\WithdrawalBundle\Mail;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
-/** Shared storage shape for the three bundles; easy to move into commerce later. */
 final class MailOptions
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     */
     public static function defaults(): array
     {
         return [
@@ -20,17 +21,19 @@ final class MailOptions
     }
 
     /** @param array<string, mixed> $values
-     *  @return array<string, mixed>
+     * @return array<string, mixed>
      */
     public static function validate(array $values, string $bundle): array
     {
         $options = array_replace(self::defaults(), $values);
+
         foreach (['senderName', 'senderAddress', 'replyTo', 'accent', 'logoPath', 'voice'] as $name) {
             if (!\is_string($options[$name])) {
                 throw new \InvalidArgumentException('Invalid mail setting: '.$name);
             }
         }
         EditableMail::header($options['senderName']);
+
         foreach (['senderAddress', 'replyTo'] as $key) {
             if ('' !== $options[$key] && (false === filter_var($options[$key], FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $options[$key]))) {
                 throw new \InvalidArgumentException('Invalid mail address: '.$key);
@@ -45,10 +48,12 @@ final class MailOptions
         if (!\is_array($options['templates'])) {
             throw new \InvalidArgumentException('Invalid mail templates.');
         }
+
         foreach ($options['templates'] as $locale => $kinds) {
             if (!\in_array($locale, ['de', 'en'], true) || !\is_array($kinds)) {
                 throw new \InvalidArgumentException('Unknown mail language.');
             }
+
             foreach ($kinds as $kind => $fields) {
                 if (!\in_array($kind, EditableMail::kinds($bundle), true) || !\is_array($fields)) {
                     throw new \InvalidArgumentException('Unknown mail type.');
@@ -61,14 +66,16 @@ final class MailOptions
     }
 
     /** @param array<string, mixed> $options
-     *  @return array<string, string>
+     * @return array<string, string>
      */
     public static function fields(array $options, string $kind, string $locale): array
     {
         return EditableMail::resolve($kind, $locale, (string) ($options['voice'] ?? 'sie'), $options['templates'][$locale][$kind] ?? []);
     }
 
-    /** @param array<string, mixed> $options */
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function address(Email $email, array $options, string $fallbackAddress, string $fallbackName): Email
     {
         $address = (string) ($options['senderAddress'] ?: $fallbackAddress);
@@ -85,7 +92,9 @@ final class MailOptions
         return $email;
     }
 
-    /** @param array<string, mixed> $options */
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function logoPath(array $options): string|null
     {
         $relative = (string) ($options['logoPath'] ?? '');
@@ -102,7 +111,9 @@ final class MailOptions
         return $path;
     }
 
-    /** @param array<string, mixed> $options */
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function embedLogo(Email $email, array $options): Email
     {
         $path = self::logoPath($options);
