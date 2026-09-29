@@ -4,20 +4,28 @@
 
 - [x] Ausgangszustand und vorhandene Tests geprüft (Contao 5.7, PHP 8.3).
 - [x] § 356a BGB an der [Primärquelle](https://www.gesetze-im-internet.de/bgb/__356a.html) gelesen (29.09.2026).
-- [ ] Formularzustände, mehrere Tabs, Wiederholung, CSRF und Missbrauchsschutz prüfen.
-- [ ] Zeitstempel, Eingaben, Barrierefreiheit und Übersetzungen prüfen.
-- [ ] Mailfehler, parallele Wiederholungen und Datenschutz prüfen.
-- [ ] Backend-Rechte, Cache/ESI und unterstützte Contao-Versionen prüfen.
-- [ ] Paketinhalt, Dokumentation und CI vorbereiten.
-- [ ] Abschließend `make reset && make check` ausführen und Befunde dokumentieren.
+- [x] Formularzustände, mehrere Tabs, Wiederholung, CSRF und Missbrauchsschutz prüfen.
+- [x] Zeitstempel, Eingaben, Barrierefreiheit und Übersetzungen prüfen.
+- [x] Mailfehler, parallele Wiederholungen und Datenschutz prüfen.
+- [x] Backend-Rechte, Cache/ESI und unterstützte Contao-Versionen prüfen.
+- [x] Paketinhalt, Dokumentation und CI vorbereiten.
+- [x] Abschließend `make reset && make check` ausführen und Befunde dokumentieren.
 
 ## Veröffentlichung
+
+- [x] README deutsch/englisch, MIT-Lizenz und Composer-Metadaten vorbereitet.
+- [x] Versionsangabe auf tatsächlich getestete Contao-5.7-/PHP-8.3-Basis begrenzt.
+- [x] `.gitattributes` und automatischen Exporttest ergänzt.
+- [x] GitHub-Actions-Workflow für `make check` in dev/prod vorbereitet.
+- [x] Manager-ZIP-Build mit Version im Archiv und geprüftem Paketinhalt vorbereitet.
 
 - [ ] Arne entscheidet offene Produkt- und Betriebsfragen aus dem Auditbericht.
 - [ ] GitHub-Repository anlegen, Lizenz und Release prüfen, dann veröffentlichen (separater Auftrag).
 - [ ] GitHub Actions im veröffentlichten Repository erfolgreich ausführen.
 - [ ] Version taggen und Paket bei Packagist registrieren, Aktualisierung einrichten.
 - [ ] Installation aus Packagist im Contao Manager prüfen.
-- [ ] Release-ZIP mit `git archive` bauen; ZIP-Upload im Contao Manager separat verifizieren.
+- [ ] Release-Version festlegen, ZIP mit `make artifact VERSION=…` bauen und echten ZIP-Upload im Contao Manager verifizieren.
 
-Es wird im Audit kein Remote angelegt und nichts gepusht.
+Abschluss: Beide frischen Prüfläufe (dev/prod) grün mit 22 PHP-Tests / 135 Assertions und 19 Browsertests. Befunde und Ausgaben: [Auditbericht](audit.md).
+
+Es wurde kein Remote angelegt und nichts gepusht.
