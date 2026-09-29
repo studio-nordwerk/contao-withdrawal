@@ -30,7 +30,7 @@ for (const colorScheme of ["light", "dark"] as const) {
   test(`the base styling gives buttons and fields one shape and follows the tokens (${colorScheme})`, async ({
     browser,
   }) => {
-    const context = await browser.newContext({ colorScheme, javaScriptEnabled: false });
+    const context = await browser.newContext({ colorScheme });
     const page = await context.newPage();
     await page.goto("/withdrawal");
     await expect(page.locator('link[href*="withdrawal-base.css"]')).toHaveCount(1);

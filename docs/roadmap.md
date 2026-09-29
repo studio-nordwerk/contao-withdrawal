@@ -18,6 +18,12 @@
 - [x] `make check` lokal grün (23 PHP-Tests, 20 Browser-Tests).
 - [x] Politur-Commits bis `4982507` auf `main` gepusht; GitHub Actions für Dev und Prod grün.
 
+## Politur-Runde 2 (Konsistenz mit Mini-Shop und Seminar)
+
+- [x] Optionale Grundgestaltung `withdrawal-base.css` mit den gemeinsamen Design-Tokens (`--nw-*`), im Backend abschaltbar, mit Hell/Dunkel-Test der berechneten Radien und Höhen ([Design-Tokens](design-tokens.md)).
+- [x] Der Titel der Funktion ist jetzt eine `h1` (vorher `h2`), damit die Seite eine Überschrift der obersten Ebene hat.
+- [x] E2E-Test, dass `/` bei jeder Browsersprache auf die Startseite führt.
+
 ## Veröffentlichung
 
 - [x] README deutsch/englisch, MIT-Lizenz und Composer-Metadaten vorbereitet.
