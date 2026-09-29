@@ -23,6 +23,7 @@ test("untrusted declaration markup is text in frontend and backend", async ({ pa
   await expect(row).toContainText(payload);
   await expect(page.getByRole("link", { name: "Withdrawals", exact: true })).toHaveCount(2);
   await row.locator('a[href*="act=edit"]').first().click();
+  await expect(page.locator("[name=submittedAt]")).toHaveValue(/Europe\/Berlin/);
   await page.locator("[name=consumerName]").evaluate((input) => input.removeAttribute("readonly"));
   await page.locator("[name=consumerName]").fill("TAMPERED");
   await page.getByRole("button", { name: "Save and close" }).click();

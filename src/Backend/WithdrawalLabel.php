@@ -16,6 +16,8 @@ final class WithdrawalLabel
      */
     public function __invoke(array $row, string $label, DataContainer $dc, array $args): string
     {
+        $args[0] = WithdrawalTime::format($row['submittedAt']);
+
         return htmlspecialchars(implode(' | ', $args), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }
