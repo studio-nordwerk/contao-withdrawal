@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/workspace
     environment:
-      APP_ENV: dev
+      APP_ENV: ${APP_ENV:-dev}
       APP_SECRET: ${APP_SECRET:-change-me-too}
       DATABASE_URL: mysql://contao:contao@db:3306/contao?serverVersion=mariadb-11.8.9&charset=utf8mb4
       MAILER_DSN: smtp://mailpit:1025

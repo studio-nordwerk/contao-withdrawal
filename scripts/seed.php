@@ -54,7 +54,8 @@ try {
         'tstamp' => $now,
         'type' => 'html',
         'html' => '<nav aria-label="Widerruf">{{withdrawal_link}}</nav>',
-        'ptable' => 'tl_article',
+        'ptable' => 'tl_theme',
+        'pid' => $themeId,
     ]);
     $footerId = (int) $db->lastInsertId();
 
