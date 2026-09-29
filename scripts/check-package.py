@@ -26,9 +26,14 @@ print(f"Package export verified: {len(names)} entries, no development files.")
 
 with tempfile.TemporaryDirectory(prefix="withdrawal-package-") as directory:
     artifact = Path(directory) / "audit.zip"
-    subprocess.run([sys.executable, "scripts/build-artifact.py", "0.0.0-audit", str(artifact)], check=True, stdout=subprocess.DEVNULL)
+    subprocess.run([sys.executable, "scripts/build-artifact.py", "0.0.0-dev", str(artifact)], check=True, stdout=subprocess.DEVNULL)
     with zipfile.ZipFile(artifact) as package:
-        assert json.loads(package.read("composer.json"))["version"] == "0.0.0-audit"
+        assert json.loads(package.read("composer.json"))["version"] == "0.0.0-dev"
         assert package.namelist().count("composer.json") == 1
         assert set(package.namelist()) == set(names)
 print("Contao Manager artifact verified: root manifest with a unique version entry.")
+
+with tempfile.TemporaryDirectory(prefix="withdrawal-invalid-version-") as directory:
+    artifact = Path(directory) / "invalid.zip"
+    result = subprocess.run([sys.executable, "scripts/build-artifact.py", "1.0.0-garbage", str(artifact)], capture_output=True)
+    assert result.returncode != 0 and not artifact.exists(), "Builder must reject Composer-incompatible version suffixes"

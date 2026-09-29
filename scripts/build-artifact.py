@@ -7,7 +7,7 @@ import subprocess
 import sys
 import zipfile
 
-if len(sys.argv) != 3 or not re.fullmatch(r"\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?", sys.argv[1]):
+if len(sys.argv) != 3 or not re.fullmatch(r"\d+\.\d+\.\d+(?:-dev|-(?:alpha|beta|RC|rc)(?:[.-]?\d+)?)?", sys.argv[1]):
     raise SystemExit("Usage: build-artifact.py VERSION OUTPUT.zip (e.g. 1.0.0)")
 version, output = sys.argv[1:]
 archive = subprocess.check_output(["git", "archive", "--worktree-attributes", "--format=zip", "HEAD"])
