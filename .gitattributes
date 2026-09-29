@@ -1,6 +1,7 @@
 * text=auto eol=lf
 /.gitattributes export-ignore
 /.gitignore export-ignore
+/.prettierignore export-ignore
 /.env.example export-ignore
 /.github export-ignore
 /Makefile export-ignore
