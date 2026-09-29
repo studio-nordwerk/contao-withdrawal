@@ -13,16 +13,22 @@ final readonly class WithdrawalSettings
     }
 
     /**
-     * @return array{merchantEmail: string, path: string}
+     * @return array{merchantEmail: string, path: string, baseStylesEnabled: bool}
      */
     public function stored(): array
     {
-        $row = $this->connection->fetchAssociative('SELECT merchantEmail, path FROM tl_withdrawal_settings WHERE id = 1');
+        $row = $this->connection->fetchAssociative('SELECT merchantEmail, path, baseStylesEnabled FROM tl_withdrawal_settings WHERE id = 1');
 
-        return false === $row ? ['merchantEmail' => '', 'path' => '/withdrawal'] : [
+        return false === $row ? ['merchantEmail' => '', 'path' => '/withdrawal', 'baseStylesEnabled' => true] : [
             'merchantEmail' => (string) $row['merchantEmail'],
             'path' => (string) $row['path'],
+            'baseStylesEnabled' => '1' === (string) $row['baseStylesEnabled'],
         ];
+    }
+
+    public function baseStylesEnabled(): bool
+    {
+        return $this->stored()['baseStylesEnabled'];
     }
 
     public function merchantEmail(): string
@@ -43,13 +49,13 @@ final readonly class WithdrawalSettings
         return $path;
     }
 
-    public function save(string $email, string $path): void
+    public function save(string $email, string $path, bool $baseStylesEnabled = true): void
     {
         if (false === filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)) {
             throw new \InvalidArgumentException('Bitte eine gültige Händleradresse eingeben.');
         }
         self::assertPath($path);
-        $data = ['tstamp' => time(), 'merchantEmail' => $email, 'path' => $path];
+        $data = ['tstamp' => time(), 'merchantEmail' => $email, 'path' => $path, 'baseStylesEnabled' => $baseStylesEnabled ? '1' : ''];
         if ($this->connection->fetchOne('SELECT id FROM tl_withdrawal_settings WHERE id = 1')) {
             $this->connection->update('tl_withdrawal_settings', $data, ['id' => 1]);
         } else {

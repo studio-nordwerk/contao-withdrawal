@@ -30,11 +30,11 @@ final class SettingsModule extends BackendModule
                 $pathInput = Input::post('path');
                 $email = \is_string($emailInput) ? trim($emailInput) : '';
                 $path = \is_string($pathInput) ? trim($pathInput) : '';
-                $settings->save($email, $path);
+                $settings->save($email, $path, '1' === Input::post('baseStylesEnabled'));
                 Controller::redirect('contao?do=withdrawal_settings&saved=1');
             } catch (\InvalidArgumentException $exception) {
                 $error = $exception->getMessage();
-                $values = ['merchantEmail' => $email, 'path' => $path];
+                $values = ['merchantEmail' => $email, 'path' => $path, 'baseStylesEnabled' => '1' === Input::post('baseStylesEnabled')];
             }
         }
         $this->Template->setData(['values' => $values, 'error' => $error, 'saved' => '1' === Input::get('saved')]);

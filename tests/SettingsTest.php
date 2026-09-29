@@ -30,6 +30,11 @@ final class SettingsTest extends TestCase
             $settings->save('merchant@example.test', '/service/widerruf');
             $this->assertSame('merchant@example.test', $settings->merchantEmail());
             $this->assertSame('/service/widerruf', $settings->path());
+            $this->assertTrue($settings->baseStylesEnabled(), 'The base styling is on by default.');
+            $settings->save('merchant@example.test', '/service/widerruf', false);
+            $this->assertFalse($settings->baseStylesEnabled());
+            $settings->save('merchant@example.test', '/service/widerruf');
+            $this->assertTrue($settings->baseStylesEnabled());
             $_SERVER['WITHDRAWAL_MERCHANT_EMAIL'] = 'override@example.test';
             $_SERVER['WITHDRAWAL_PATH'] = '/override';
             $this->assertSame('override@example.test', $settings->merchantEmail());

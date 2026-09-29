@@ -23,6 +23,7 @@ services:
       - "8081:80"
     volumes:
       - ./app/public:/workspace/app/public:ro
+      - ./public:/workspace/public:ro
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
       - php

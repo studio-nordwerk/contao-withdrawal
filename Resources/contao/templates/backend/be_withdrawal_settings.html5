@@ -11,6 +11,14 @@
         <div class="widget"><h3><label for="ctrl_path">Öffentlicher Pfad der Widerrufsfunktion</label></h3>
             <input class="tl_text" id="ctrl_path" type="text" name="path" required value="<?= $escape($this->values['path']) ?>">
             <p class="tl_help tl_tip">Zum Beispiel /withdrawal oder /service/widerruf. Die Seite muss veröffentlicht und ungeschützt sein.</p></div>
+    </fieldset>
+    <fieldset class="tl_tbox">
+        <legend>Darstellung</legend>
+        <div class="widget"><div class="tl_checkbox_single_container">
+            <input type="hidden" name="baseStylesEnabled" value="">
+            <input class="tl_checkbox" id="ctrl_baseStylesEnabled" type="checkbox" name="baseStylesEnabled" value="1"<?= $this->values['baseStylesEnabled'] ? ' checked' : '' ?>>
+            <label for="ctrl_baseStylesEnabled">Grundgestaltung der Widerrufsfunktion einschalten</label></div>
+            <p class="tl_help tl_tip">Felder, Buttons und Abstände passend zur Website. Schrift und Farben kommen von Ihrem Theme; Anpassungen über die CSS-Variablen --nw-*. Ausschalten, wenn Ihr Theme das Formular selbst gestaltet.</p></div>
     </fieldset></div>
     <div class="tl_formbody_submit"><div class="tl_submit_container"><button class="tl_submit" type="submit">Speichern</button></div></div>
 </form>

@@ -1,0 +1,169 @@
+/*
+ * Optional base styling of the withdrawal function. It takes font and colors from the website and
+ * follows the shared Nordwerk design tokens (--nw-*, see docs/design-tokens.md).
+ * Switch it off under "Widerruf einrichten" if the theme styles the form itself.
+ */
+:where(:root) {
+  --nw-accent: currentColor;
+  --nw-accent-contrast: Canvas;
+  --nw-surface: transparent;
+  --nw-border: color-mix(in srgb, currentColor 24%, transparent);
+  --nw-field-border: color-mix(in srgb, currentColor 58%, transparent);
+  --nw-focus: currentColor;
+  --nw-focus-width: 3px;
+  --nw-focus-offset: 3px;
+  --nw-border-width: 1px;
+  --nw-radius-control: 0.75rem;
+  --nw-radius-card: 1.125rem;
+  --nw-control-height: 2.75rem;
+  --nw-font-size: 1rem;
+  --nw-font-size-small: 0.9rem;
+  --nw-space-xs: 0.5rem;
+  --nw-space-sm: 0.75rem;
+  --nw-space-md: 1.25rem;
+  --nw-space-lg: 1.5rem;
+  --nw-space-xl: 2.5rem;
+}
+
+.withdrawal {
+  max-width: 42rem;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+.withdrawal *,
+.withdrawal *::before,
+.withdrawal *::after {
+  box-sizing: border-box;
+}
+
+.withdrawal h1 {
+  margin: 0 0 var(--nw-space-md);
+  line-height: 1.2;
+}
+
+.withdrawal p {
+  margin: 0 0 var(--nw-space-sm);
+}
+
+.withdrawal a {
+  color: inherit;
+  text-underline-offset: 0.18em;
+}
+
+.withdrawal :focus-visible {
+  outline: var(--nw-focus-width) solid var(--nw-focus);
+  outline-offset: var(--nw-focus-offset);
+}
+
+.withdrawal__field {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 var(--nw-space-sm);
+}
+
+.withdrawal label {
+  font-size: var(--nw-font-size-small);
+  font-weight: 600;
+}
+
+.withdrawal input:not([type="hidden"]),
+.withdrawal textarea {
+  display: block;
+  width: 100%;
+  min-height: var(--nw-control-height);
+  padding: 0.5rem 0.75rem;
+  border: var(--nw-border-width) solid var(--nw-field-border);
+  border-radius: var(--nw-radius-control);
+  background: var(--nw-surface);
+  color: inherit;
+  font: inherit;
+  font-size: var(--nw-font-size);
+  line-height: 1.4;
+}
+
+.withdrawal textarea {
+  min-height: calc(var(--nw-control-height) * 2.5);
+  resize: vertical;
+}
+
+.withdrawal [aria-invalid="true"] {
+  border-width: calc(var(--nw-border-width) * 2);
+  border-color: var(--nw-accent);
+}
+
+.withdrawal__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--nw-control-height);
+  padding: 0.5rem 1.25rem;
+  border: var(--nw-border-width) solid var(--nw-accent);
+  border-radius: var(--nw-radius-control);
+  background: transparent;
+  color: var(--nw-accent);
+  font: inherit;
+  font-size: var(--nw-font-size);
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.withdrawal__button--primary {
+  background: var(--nw-accent);
+  color: var(--nw-accent-contrast);
+}
+
+.withdrawal__button:hover {
+  text-decoration: underline;
+}
+
+.withdrawal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nw-space-sm);
+  margin-top: var(--nw-space-md);
+}
+
+.withdrawal__alert,
+.withdrawal__notice {
+  margin: 0 0 var(--nw-space-md);
+  padding: 0.8rem 1rem;
+  border: var(--nw-border-width) solid var(--nw-accent);
+  border-radius: var(--nw-radius-card);
+  background: var(--nw-surface);
+}
+
+.withdrawal__alert p,
+.withdrawal__alert ul {
+  margin: 0;
+}
+
+.withdrawal__alert ul {
+  padding-left: 1.2rem;
+}
+
+.withdrawal__summary {
+  margin: 0 0 var(--nw-space-md);
+  padding: var(--nw-space-lg);
+  border: var(--nw-border-width) solid var(--nw-border);
+  border-radius: var(--nw-radius-card);
+  background: var(--nw-surface);
+}
+
+.withdrawal__summary dt {
+  font-size: var(--nw-font-size-small);
+  font-weight: 600;
+}
+
+.withdrawal__summary dd {
+  margin: 0 0 var(--nw-space-sm);
+  overflow-wrap: anywhere;
+}
+
+.withdrawal__summary dd:last-child {
+  margin-bottom: 0;
+}

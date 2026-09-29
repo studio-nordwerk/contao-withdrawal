@@ -15,6 +15,7 @@ use Nordwerk\WithdrawalBundle\Event\WithdrawalSubmittedEvent;
 use Nordwerk\WithdrawalBundle\Http\ReceiptTime;
 use Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer;
 use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
+use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +30,7 @@ final class WithdrawalController extends AbstractContentElementController
         private readonly WithdrawalMailer $mailer,
         private readonly EventDispatcherInterface $events,
         private readonly LoggerInterface $logger,
+        private readonly WithdrawalSettings|null $settings = null,
     ) {
     }
 
@@ -136,6 +138,7 @@ final class WithdrawalController extends AbstractContentElementController
             $values = $flow['values'];
         }
 
+        $template->set('baseStylesEnabled', $this->settings?->baseStylesEnabled() ?? true);
         $template->set('stage', $stage);
         $template->set('values', $values);
         $template->set('errors', $errors);

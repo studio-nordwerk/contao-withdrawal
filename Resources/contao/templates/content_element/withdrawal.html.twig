@@ -1,14 +1,15 @@
 {% extends '@Contao/content_element/_base.html.twig' %}
 
 {% block content %}
+    {% if baseStylesEnabled %}<link rel="stylesheet" href="{{ asset('bundles/nordwerkwithdrawal/withdrawal-base.css') }}">{% endif %}
     <section class="withdrawal" aria-labelledby="withdrawal-title-{{ elementId }}">
-        <h2 id="withdrawal-title-{{ elementId }}"{% if stage != 'form' %} tabindex="-1" autofocus{% endif %}>{{ 'withdrawal.title'|trans }}</h2>
+        <h1 id="withdrawal-title-{{ elementId }}"{% if stage != 'form' %} tabindex="-1" autofocus{% endif %}>{{ 'withdrawal.title'|trans }}</h1>
         {% if stage == 'success' %}
-            <p role="status">{{ 'withdrawal.success'|trans }}</p>
+            <p class="withdrawal__notice" role="status">{{ 'withdrawal.success'|trans }}</p>
             <p>{{ 'withdrawal.received'|trans }} <time datetime="{{ submittedAt|date('c', 'Europe/Berlin') }}">{{ submittedAt|date('d.m.Y H:i:s P', 'Europe/Berlin') }} {{ 'withdrawal.clock'|trans }}</time></p>
         {% elseif stage == 'review' %}
             <p>{{ 'withdrawal.review'|trans }}</p>
-            <dl>
+            <dl class="withdrawal__summary">
                 <dt>{{ 'withdrawal.name'|trans }}</dt><dd>{{ values.name }}</dd>
                 <dt>{{ 'withdrawal.contract'|trans }}</dt><dd>{{ values.contractReference|nl2br }}</dd>
                 <dt>{{ 'withdrawal.email'|trans }}</dt><dd>{{ values.email }}</dd>
@@ -18,13 +19,15 @@
                 <input type="hidden" name="REQUEST_TOKEN" value="{{ token }}">
                 <input type="hidden" name="withdrawal_flow" value="{{ flowId }}">
                 <input type="hidden" name="withdrawal_element" value="{{ elementId }}">
-                <button type="submit" name="withdrawal_action" value="confirm">{{ 'withdrawal.confirm'|trans }}</button>
-                <button type="submit" name="withdrawal_action" value="edit">{{ 'withdrawal.edit'|trans }}</button>
+                <div class="withdrawal__actions">
+                    <button class="withdrawal__button withdrawal__button--primary" type="submit" name="withdrawal_action" value="confirm">{{ 'withdrawal.confirm'|trans }}</button>
+                    <button class="withdrawal__button" type="submit" name="withdrawal_action" value="edit">{{ 'withdrawal.edit'|trans }}</button>
+                </div>
             </form>
         {% else %}
             <p>{{ 'withdrawal.intro'|trans }}</p>
             {% if errors|length %}
-                <div role="alert" tabindex="-1" autofocus>
+                <div class="withdrawal__alert" role="alert" tabindex="-1" autofocus>
                     <p>{{ 'withdrawal.error'|trans }}</p>
                     <ul>
                         {% for field in errors|keys %}
@@ -44,13 +47,13 @@
                 <input type="hidden" name="withdrawal_flow" value="{{ flowId }}">
                 <input type="hidden" name="withdrawal_element" value="{{ elementId }}">
                 <input type="hidden" name="withdrawal_action" value="review">
-                <div><label for="withdrawal-name-{{ elementId }}">{{ 'withdrawal.name'|trans }}</label><input id="withdrawal-name-{{ elementId }}" name="name"{% if errors.name is defined %} aria-invalid="true" aria-describedby="withdrawal-error-name-{{ elementId }}"{% endif %} required autocomplete="name" value="{{ values.name }}"></div>
-                <div><label for="withdrawal-contractReference-{{ elementId }}">{{ 'withdrawal.contract'|trans }}</label><textarea id="withdrawal-contractReference-{{ elementId }}" name="contractReference"{% if errors.contractReference is defined %} aria-invalid="true" aria-describedby="withdrawal-error-contractReference-{{ elementId }}"{% endif %} required>{{ values.contractReference }}</textarea></div>
-                <div><label for="withdrawal-email-{{ elementId }}">{{ 'withdrawal.email'|trans }}</label><input id="withdrawal-email-{{ elementId }}" name="email"{% if errors.email is defined %} aria-invalid="true" aria-describedby="withdrawal-error-email-{{ elementId }}"{% endif %} type="text" inputmode="email" required autocomplete="email" value="{{ values.email }}"></div>
+                <div class="withdrawal__field"><label for="withdrawal-name-{{ elementId }}">{{ 'withdrawal.name'|trans }}</label><input id="withdrawal-name-{{ elementId }}" name="name"{% if errors.name is defined %} aria-invalid="true" aria-describedby="withdrawal-error-name-{{ elementId }}"{% endif %} required autocomplete="name" value="{{ values.name }}"></div>
+                <div class="withdrawal__field"><label for="withdrawal-contractReference-{{ elementId }}">{{ 'withdrawal.contract'|trans }}</label><textarea id="withdrawal-contractReference-{{ elementId }}" name="contractReference"{% if errors.contractReference is defined %} aria-invalid="true" aria-describedby="withdrawal-error-contractReference-{{ elementId }}"{% endif %} required>{{ values.contractReference }}</textarea></div>
+                <div class="withdrawal__field"><label for="withdrawal-email-{{ elementId }}">{{ 'withdrawal.email'|trans }}</label><input id="withdrawal-email-{{ elementId }}" name="email"{% if errors.email is defined %} aria-invalid="true" aria-describedby="withdrawal-error-email-{{ elementId }}"{% endif %} type="text" inputmode="email" required autocomplete="email" value="{{ values.email }}"></div>
                 <div class="withdrawal-honeypot" aria-hidden="true"><label for="withdrawal-website-{{ elementId }}">Website</label><input id="withdrawal-website-{{ elementId }}" name="website" tabindex="-1" autocomplete="off"{% if errors.spam is defined %} disabled{% endif %}></div>
-                <button type="submit">{{ 'withdrawal.next'|trans }}</button>
+                <div class="withdrawal__actions"><button class="withdrawal__button withdrawal__button--primary" type="submit">{{ 'withdrawal.next'|trans }}</button></div>
             </form>
         {% endif %}
     </section>
-    <style>.withdrawal{max-width:42rem}.withdrawal form>div:not(.withdrawal-honeypot){margin:1rem 0}.withdrawal label{display:block;font-weight:700}.withdrawal input:not([type=hidden]),.withdrawal textarea{box-sizing:border-box;width:100%;padding:.6rem}.withdrawal button{padding:.8rem 1.25rem;font-weight:700;cursor:pointer}.withdrawal-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}</style>
+    <style>.withdrawal label{display:block}.withdrawal input:not([type=hidden]),.withdrawal textarea{box-sizing:border-box;max-width:100%}.withdrawal-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}</style>
 {% endblock %}
