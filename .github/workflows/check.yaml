@@ -33,6 +33,8 @@ jobs:
           PY
       - name: Start isolated demo and install dependencies
         run: make up
+      - name: Allow PHP-FPM to write runtime files
+        run: docker compose exec -T php chown -R www-data:www-data /workspace/app/var
       - name: Verify seeded frontend
         run: |
           curl --silent --show-error --dump-header /tmp/withdrawal-headers --output /tmp/withdrawal-page http://127.0.0.1:8081/withdrawal
