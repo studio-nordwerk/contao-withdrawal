@@ -11,6 +11,12 @@
 - [x] Paketinhalt, Dokumentation und CI vorbereiten.
 - [x] Abschließend `make reset && make check` ausführen und Befunde dokumentieren.
 
+## Politur-Runde 1
+
+- [x] Widerrufsbestätigung als überschreibbare Multipart-Twig-Mail mit unverändertem Textteil und schlichtem HTML-Teil.
+- [x] Händleradresse und öffentlicher Pfad im Backend einstellbar; Umgebungsvariablen bleiben optionale Overrides. Browser- und Injection-Tests grün.
+- [x] `make check` lokal grün (23 PHP-Tests, 20 Browser-Tests).
+
 ## Veröffentlichung
 
 - [x] README deutsch/englisch, MIT-Lizenz und Composer-Metadaten vorbereitet.
