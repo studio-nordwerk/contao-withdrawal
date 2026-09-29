@@ -75,7 +75,9 @@ test("footer, two steps, immediate mails and idempotency", async ({ page, reques
     expect(mail).toContain("ORDER-E2E-123");
     expect(mail).toMatch(/\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}/);
     expect(payload.HTML).toContain("<table");
-    for (const line of payload.Text.split("\n").map((line) => line.trim()).filter(Boolean)) {
+    for (const line of payload.Text.split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)) {
       expect(payload.HTML.replace(/<[^>]+>/g, " ")).toContain(line);
     }
   }

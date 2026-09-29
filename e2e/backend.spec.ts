@@ -2,7 +2,9 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-test("backend withdrawal settings control the public link without environment variables", async ({ page }) => {
+test("backend withdrawal settings control the public link without environment variables", async ({
+  page,
+}) => {
   const env = readFileSync(".env", "utf8");
   await page.goto("/contao?do=withdrawal_settings");
   await page.locator("[name=username]").fill(env.match(/^CONTAO_ADMIN_EMAIL=(.*)$/m)![1]);
@@ -16,7 +18,10 @@ test("backend withdrawal settings control the public link without environment va
     await page.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByText("Einstellungen gespeichert.")).toBeVisible();
     await page.goto("/home");
-    await expect(page.getByRole("link", { name: "Vertrag widerrufen" })).toHaveAttribute("href", "/service/widerruf");
+    await expect(page.getByRole("link", { name: "Vertrag widerrufen" })).toHaveAttribute(
+      "href",
+      "/service/widerruf",
+    );
   } finally {
     await page.goto("/contao?do=withdrawal_settings");
     await page.locator("#ctrl_merchantEmail").fill(email);
