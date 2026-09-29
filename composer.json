@@ -1,8 +1,15 @@
 {
   "name": "nordwerk/contao-withdrawal-bundle",
-  "description": "Shop-independent withdrawal function for Contao",
+  "description": "Electronic withdrawal button (Widerrufsbutton) for Contao under § 356a BGB",
   "license": "MIT",
   "type": "contao-bundle",
+  "keywords": [
+    "contao",
+    "withdrawal",
+    "widerruf",
+    "widerrufsbutton",
+    "356a-bgb"
+  ],
   "require": {
     "php": "^8.3",
     "contao/core-bundle": "^5.7",

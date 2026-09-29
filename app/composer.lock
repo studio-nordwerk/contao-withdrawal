@@ -5680,7 +5680,14 @@
             "license": [
                 "MIT"
             ],
-            "description": "Shop-independent withdrawal function for Contao",
+            "description": "Electronic withdrawal button (Widerrufsbutton) for Contao under § 356a BGB",
+            "keywords": [
+                "356a-bgb",
+                "contao",
+                "widerruf",
+                "widerrufsbutton",
+                "withdrawal"
+            ],
             "transport-options": {
                 "symlink": true,
                 "relative": true
