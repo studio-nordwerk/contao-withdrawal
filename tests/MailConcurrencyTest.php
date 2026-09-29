@@ -6,10 +6,12 @@ namespace Nordwerk\WithdrawalBundle\Tests;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Nordwerk\WithdrawalBundle\Command\ResendPendingCommand;
 use Nordwerk\WithdrawalBundle\Domain\WithdrawalDeclaration;
 use Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer;
 use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
@@ -36,6 +38,21 @@ final class MailConcurrencyTest extends TestCase
     {
         $this->connection->delete('tl_withdrawal', ['id' => $this->id]);
         $this->connection->close();
+    }
+
+    public function testRetryCommandDoesNotPrintTransportPersonalData(): void
+    {
+        $transport = $this->createMock(MailerInterface::class);
+        $transport
+            ->method('send')
+            ->willThrowException(new \RuntimeException('Rejected ada@example.test; AUTH secret; NAME Ada'))
+        ;
+        $command = new ResendPendingCommand($this->repository, new WithdrawalMailer($transport, $this->twig, $this->repository, 'shop@example.test'));
+        $tester = new CommandTester($command);
+        $this->assertSame(1, $tester->execute([]));
+        $this->assertStringNotContainsString('ada@example.test', $tester->getDisplay());
+        $this->assertStringNotContainsString('secret', $tester->getDisplay());
+        $this->assertStringContainsString((string) $this->id, $tester->getDisplay());
     }
 
     public function testRejectedConsumerAddressDoesNotBlockMerchantAndRetrySkipsMerchant(): void

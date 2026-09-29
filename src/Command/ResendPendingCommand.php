@@ -32,7 +32,7 @@ final class ResendPendingCommand extends Command
                 ++$sent;
             } catch (\Throwable $exception) {
                 ++$failed;
-                $output->writeln(\sprintf('<error>Withdrawal %d: %s</error>', $row['id'], $exception->getMessage()));
+                $output->writeln(\sprintf('<error>Withdrawal %d: %s</error>', $row['id'], $exception::class));
             }
         }
 

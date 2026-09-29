@@ -90,7 +90,7 @@ final class WithdrawalController extends AbstractContentElementController
                         try {
                             $this->events->dispatch(new WithdrawalSubmittedEvent($id, $declaration, $receivedAt));
                         } catch (\Throwable $exception) {
-                            $this->logger->error('Withdrawal event listener failed.', ['exception' => $exception, 'withdrawal' => $id]);
+                            $this->logger->error('Withdrawal event listener failed.', ['failure_type' => $exception::class, 'withdrawal' => $id]);
                         }
                     } catch (UniqueConstraintViolationException) {
                         // A concurrent confirmation already created this declaration.
@@ -102,7 +102,7 @@ final class WithdrawalController extends AbstractContentElementController
                         try {
                             $this->mailer->sendPending($row);
                         } catch (\Throwable $exception) {
-                            $this->logger->error('Withdrawal mail delivery failed.', ['exception' => $exception, 'withdrawal' => $row['id']]);
+                            $this->logger->error('Withdrawal mail delivery failed.', ['failure_type' => $exception::class, 'withdrawal' => $row['id']]);
                         }
                     }
                 }
