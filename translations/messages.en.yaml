@@ -1,12 +1,12 @@
 withdrawal:
   title: Withdraw contract
-  intro: "Please provide your name, contract details and an email address for confirmation."
+  intro: "Please provide your name, details of the contract or part of the contract and an email address for confirmation."
   name: Name
-  contract: "Contract details (e.g. order number)"
+  contract: "Contract details (e.g. order number and relevant items)"
   email: "Email for confirmation"
   next: Review details
   review: "Please review your details. Your withdrawal is sent only after the next step."
-  declaration: "I hereby withdraw from the specified contract."
+  declaration: "I hereby withdraw from the specified contract or part of the contract."
   confirm: Confirm withdrawal
   success: "Your withdrawal has been received."
   received: "Received:"

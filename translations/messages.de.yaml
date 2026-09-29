@@ -1,12 +1,12 @@
 withdrawal:
   title: Vertrag widerrufen
-  intro: "Bitte nennen Sie Ihren Namen, Angaben zum Vertrag und eine E-Mail-Adresse für die Eingangsbestätigung."
+  intro: "Bitte nennen Sie Ihren Namen, Angaben zum Vertrag oder Vertragsteil und eine E-Mail-Adresse für die Eingangsbestätigung."
   name: Name
-  contract: "Vertragsangaben (z. B. Bestellnummer)"
+  contract: "Vertragsangaben (z. B. Bestellnummer und betroffene Artikel)"
   email: "E-Mail für die Bestätigung"
   next: Angaben prüfen
   review: "Bitte prüfen Sie Ihre Angaben. Erst mit dem nächsten Schritt wird Ihr Widerruf übermittelt."
-  declaration: "Hiermit widerrufe ich den bezeichneten Vertrag."
+  declaration: "Hiermit widerrufe ich den bezeichneten Vertrag oder Vertragsteil."
   confirm: Widerruf bestätigen
   success: "Ihr Widerruf ist eingegangen."
   received: "Eingang:"
