@@ -1,6 +1,6 @@
 # Contao Withdrawal Bundle
 
-Kostenloses, shopunabhängiges MIT-Bundle für eine elektronische Widerrufsfunktion in Contao 5.3+. Entwickelt und lokal getestet mit Contao 5.7. Es enthält ein Inhaltselement, einen Footer-Insert-Tag, eine Backend-Liste, E-Mails und ein Event für Shop-Integrationen. Kein Login und kein JavaScript nötig.
+Kostenloses, shopunabhängiges MIT-Bundle für eine elektronische Widerrufsfunktion in Contao 5.7+. Getestet mit Contao 5.7.13 und PHP 8.3.35. Contao 5.3 wird nicht als kompatibel freigegeben; dafür fehlt eine eigene Testsuite. Es enthält ein Inhaltselement, einen Footer-Insert-Tag, eine Backend-Liste, E-Mails und ein Event für Shop-Integrationen. Kein Login und kein JavaScript nötig.
 
 ## Deutsch
 
@@ -30,7 +30,9 @@ Die Demo liegt auf `http://localhost:8081/withdrawal`, Mailpit auf `http://local
 
 ## English
 
-This free MIT bundle adds a shop-independent withdrawal flow to Contao 5.3+. [Section 356a BGB](https://www.gesetze-im-internet.de/bgb/__356a.html) calls for an accessible withdrawal function, a separate confirmation action and an immediate receipt on a durable medium containing the declaration and receipt date and time. The merchant reviews eligibility later. **This is not legal advice.**
+Tested with Contao 5.7.13 and PHP 8.3.35. Contao 5.3 is not advertised as supported because it has not been tested.
+
+This free MIT bundle adds a shop-independent withdrawal flow to Contao 5.7+. [Section 356a BGB](https://www.gesetze-im-internet.de/bgb/__356a.html) calls for an accessible withdrawal function, a separate confirmation action and an immediate receipt on a durable medium containing the declaration and receipt date and time. The merchant reviews eligibility later. **This is not legal advice.**
 
 Install `nordwerk/contao-withdrawal-bundle`, run Contao's database migration, set `WITHDRAWAL_MERCHANT_EMAIL`, and configure Symfony Mailer. Create a public page with alias `withdrawal` containing the **Withdrawal function** content element. Put `{{withdrawal_link}}` in the footer on every page. Set `WITHDRAWAL_PATH` if the page uses a different path. Schedule `withdrawal:resend-pending` for failed delivery. The `WithdrawalSubmittedEvent` lets shops attach order-specific processing without coupling this bundle to a shop. German is the default; English interface and mail templates are included.
 

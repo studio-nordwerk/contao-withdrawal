@@ -5659,8 +5659,9 @@
                 "url": ".."
             },
             "require": {
-                "contao/core-bundle": "^5.3",
-                "php": "^8.2"
+                "contao/core-bundle": "^5.7",
+                "egulias/email-validator": "^4.0",
+                "php": "^8.3"
             },
             "type": "contao-bundle",
             "extra": {
