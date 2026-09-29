@@ -1,4 +1,4 @@
-.PHONY: up down reset check e2e
+.PHONY: up down reset check e2e artifact
 
 up:
 	docker compose up -d --build
@@ -19,12 +19,13 @@ reset:
 	./scripts/seed.sh
 
 check:
+	python3 scripts/check-package.py
 	docker compose exec -T php vendor/bin/ecs check /workspace/src /workspace/tests /workspace/Resources/contao /workspace/scripts --config=/workspace/ecs.php --no-progress-bar
 	docker compose exec -T php vendor/bin/twig-cs-fixer lint /workspace/templates /workspace/Resources/contao/templates
 	docker compose exec -T php composer validate --strict /workspace/composer.json
 	docker compose exec -T php composer normalize --dry-run /workspace/composer.json
 	docker compose exec -T php php bin/console lint:twig /workspace/templates /workspace/Resources/contao/templates
-	docker compose exec -T php php bin/console lint:yaml /workspace/config /workspace/app/config /workspace/translations
+	docker compose exec -T php php bin/console lint:yaml /workspace/config /workspace/app/config /workspace/translations /workspace/.github
 	docker compose exec -T php php bin/console lint:container
 	docker compose exec -T php vendor/bin/phpstan analyse --configuration=/workspace/phpstan.neon.dist
 	docker compose exec -T php vendor/bin/phpunit --configuration=/workspace/phpunit.xml.dist
@@ -33,3 +34,8 @@ check:
 e2e:
 	vp check
 	vp exec playwright test
+
+OUTPUT ?= dist/contao-withdrawal-$(VERSION).zip
+
+artifact:
+	python3 scripts/build-artifact.py "$(VERSION)" "$(OUTPUT)"
