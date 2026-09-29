@@ -78,3 +78,67 @@ test("Unicode email domains can pass browser and server validation", async ({ pa
   await page.getByRole("button", { name: "Angaben prüfen" }).click();
   await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
 });
+
+test("parallel confirmations store once and browser Back cannot replace the reviewed snapshot", async ({
+  page,
+}) => {
+  const count = () =>
+    Number(
+      execFileSync(
+        "docker",
+        [
+          "compose",
+          "exec",
+          "-T",
+          "db",
+          "mariadb",
+          "-ucontao",
+          "-pcontao",
+          "contao",
+          "-N",
+          "-e",
+          "SELECT COUNT(*) FROM tl_withdrawal",
+        ],
+        { encoding: "utf8" },
+      ).trim(),
+    );
+  const before = count();
+  await review(page, "IMMUTABLE-A");
+  const form = {
+    REQUEST_TOKEN: await page.locator("[name=REQUEST_TOKEN]").inputValue(),
+    withdrawal_element: await page.locator("[name=withdrawal_element]").inputValue(),
+    withdrawal_flow: await page.locator("[name=withdrawal_flow]").inputValue(),
+    withdrawal_action: "confirm",
+  };
+  await page.getByRole("button", { name: "Angaben ändern" }).click();
+  await page.locator("[name=contractReference]").fill("IMMUTABLE-B");
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  const responses = await Promise.all([
+    page.request.post("/withdrawal", { form }),
+    page.request.post("/withdrawal", { form }),
+  ]);
+  for (const response of responses)
+    expect(await response.text()).toContain("Ihr Widerruf ist eingegangen.");
+  expect(count()).toBe(before + 1);
+  const stored = execFileSync(
+    "docker",
+    [
+      "compose",
+      "exec",
+      "-T",
+      "db",
+      "mariadb",
+      "-ucontao",
+      "-pcontao",
+      "contao",
+      "-N",
+      "-e",
+      "SELECT contractReference FROM tl_withdrawal ORDER BY id DESC LIMIT 1",
+    ],
+    { encoding: "utf8" },
+  );
+  expect(stored.trim()).toBe("IMMUTABLE-A");
+  await page.getByRole("button", { name: "Widerruf bestätigen" }).click();
+  await expect(page.getByText("Ihr Widerruf ist eingegangen.")).toBeVisible();
+  expect(count()).toBe(before + 2);
+});

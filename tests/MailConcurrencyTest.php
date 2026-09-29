@@ -13,7 +13,10 @@ use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
@@ -40,6 +43,36 @@ final class MailConcurrencyTest extends TestCase
     {
         $this->connection->delete('tl_withdrawal', ['id' => $this->id]);
         $this->connection->close();
+    }
+
+    public function testUnresponsiveSmtpHonorsConfiguredTimeoutAndLeavesRecordPending(): void
+    {
+        $server = stream_socket_server('tcp://127.0.0.1:0');
+        $this->assertIsResource($server);
+        $address = stream_socket_get_name($server, false);
+        $this->assertIsString($address);
+        $port = parse_url('tcp://'.$address, PHP_URL_PORT);
+        $this->assertIsInt($port);
+        $transport = new EsmtpTransport('127.0.0.1', $port, false);
+        $stream = $transport->getStream();
+        $this->assertInstanceOf(SocketStream::class, $stream);
+        $stream->setTimeout(0.1);
+        $row = $this->repository->find($this->id);
+        $this->assertNotNull($row);
+        $start = microtime(true);
+
+        try {
+            (new WithdrawalMailer($transport, $this->twig, $this->repository, 'shop@example.test'))->sendPending($row);
+            $this->fail('A server without an SMTP greeting must time out.');
+        } catch (TransportExceptionInterface) {
+            $this->assertLessThan(3.0, microtime(true) - $start);
+            $stored = $this->repository->find($this->id);
+            $this->assertNotNull($stored);
+            $this->assertSame('pending', $stored['mailStatus']);
+            $this->assertNull($stored['confirmationSentAt']);
+        } finally {
+            fclose($server);
+        }
     }
 
     public function testSynchronousTransportRejectionCannotBeMarkedSent(): void
