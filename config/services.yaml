@@ -9,11 +9,13 @@ services:
 
   Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer:
     arguments:
-      $merchantEmail: "%env(WITHDRAWAL_MERCHANT_EMAIL)%"
+      $merchantEmail: ""
+      $settings: '@Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings'
 
   Nordwerk\WithdrawalBundle\InsertTag\WithdrawalLinkInsertTag:
     arguments:
-      $path: "%env(default:withdrawal_path:WITHDRAWAL_PATH)%"
+      $path: "/withdrawal"
+      $settings: '@Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings'
 
-parameters:
-  withdrawal_path: "/withdrawal"
+  Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings:
+    public: true

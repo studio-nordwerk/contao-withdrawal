@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="{{ locale|e('html_attr') }}">
+<head><meta charset="utf-8"><title>{{ subject|e('html') }}</title></head>
+<body style="margin:0;padding:24px;background:#f5f3ef;color:#292723;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;margin:0 auto;background:#fff;border:1px solid #e3ded5">
+        <tr><td style="padding:24px 28px 12px;font-size:18px;font-weight:bold;border-bottom:1px solid #e3ded5">{{ merchant|e('html') }}</td></tr>
+        <tr><td style="padding:20px 28px 28px">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse">
+                {% for line in body|split("\n") %}
+                    {% if line|trim %}<tr><td style="padding:2px 0;vertical-align:top;white-space:pre-wrap">{{ line|e('html') }}</td></tr>
+                    {% else %}<tr><td style="height:12px;font-size:1px;line-height:12px">&nbsp;</td></tr>{% endif %}
+                {% endfor %}
+            </table>
+        </td></tr>
+    </table>
+</body>
+</html>

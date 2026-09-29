@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Nordwerk\WithdrawalBundle\InsertTag;
 
+use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsInsertTag;
 use Contao\CoreBundle\InsertTag\InsertTagResult;
 use Contao\CoreBundle\InsertTag\OutputType;
@@ -17,6 +18,7 @@ final readonly class WithdrawalLinkInsertTag implements InsertTagResolverNestedR
     public function __construct(
         private RequestStack $requestStack,
         private string $path,
+        private WithdrawalSettings|null $settings = null,
     ) {
     }
 
@@ -25,7 +27,7 @@ final readonly class WithdrawalLinkInsertTag implements InsertTagResolverNestedR
         $request = $this->requestStack->getCurrentRequest();
         $label = str_starts_with((string) $request?->getLocale(), 'en') ? 'Withdraw contract' : 'Vertrag widerrufen';
         $mainRequest = $this->requestStack->getMainRequest() ?? $request;
-        $href = rtrim((string) $mainRequest?->getBasePath(), '/').'/'.ltrim($this->path, '/');
+        $href = rtrim((string) $mainRequest?->getBasePath(), '/').'/'.ltrim($this->settings?->path() ?? $this->path, '/');
 
         return new InsertTagResult(\sprintf('<a class="withdrawal-link" href="%s">%s</a>', htmlspecialchars($href, ENT_QUOTES), $label), OutputType::html);
     }

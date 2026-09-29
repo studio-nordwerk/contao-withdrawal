@@ -35,6 +35,7 @@ if (0 < (int) $db->fetchOne('SELECT COUNT(*) FROM tl_page')) {
 $db->beginTransaction();
 
 try {
+    $db->insert('tl_withdrawal_settings', ['id' => 1, 'tstamp' => $now, 'merchantEmail' => (string) (getenv('WITHDRAWAL_MERCHANT_EMAIL') ?: $email), 'path' => '/withdrawal']);
     if (0 === (int) $db->fetchOne('SELECT COUNT(*) FROM tl_user WHERE username = ?', [$email])) {
         $db->insert('tl_user', [
             'tstamp' => $now,
