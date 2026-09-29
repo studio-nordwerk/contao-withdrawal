@@ -1,0 +1,39 @@
+{% extends '@Contao/content_element/_base.html.twig' %}
+
+{% block content %}
+    <section class="withdrawal" aria-labelledby="withdrawal-title">
+        <h2 id="withdrawal-title">{{ 'withdrawal.title'|trans }}</h2>
+        {% if stage == 'success' %}
+            <p role="status">{{ 'withdrawal.success'|trans }}</p>
+            <p>{{ 'withdrawal.received'|trans }} <time datetime="{{ submittedAt|date('c') }}">{{ submittedAt|date('d.m.Y H:i:s', 'Europe/Berlin') }} {{ 'withdrawal.clock'|trans }}</time></p>
+        {% elseif stage == 'review' %}
+            <p>{{ 'withdrawal.review'|trans }}</p>
+            <dl>
+                <dt>{{ 'withdrawal.name'|trans }}</dt><dd>{{ values.name }}</dd>
+                <dt>{{ 'withdrawal.contract'|trans }}</dt><dd>{{ values.contractReference|nl2br }}</dd>
+                <dt>{{ 'withdrawal.email'|trans }}</dt><dd>{{ values.email }}</dd>
+            </dl>
+            <p>{{ 'withdrawal.declaration'|trans }}</p>
+            <form method="post">
+                <input type="hidden" name="REQUEST_TOKEN" value="{{ token }}">
+                <input type="hidden" name="withdrawal_element" value="{{ elementId }}">
+                <input type="hidden" name="withdrawal_action" value="confirm">
+                <button type="submit">{{ 'withdrawal.confirm'|trans }}</button>
+            </form>
+        {% else %}
+            <p>{{ 'withdrawal.intro'|trans }}</p>
+            {% if errors|length %}<p role="alert">{{ 'withdrawal.error'|trans }}</p>{% endif %}
+            <form method="post">
+                <input type="hidden" name="REQUEST_TOKEN" value="{{ token }}">
+                <input type="hidden" name="withdrawal_element" value="{{ elementId }}">
+                <input type="hidden" name="withdrawal_action" value="review">
+                <div><label for="withdrawal-name-{{ elementId }}">{{ 'withdrawal.name'|trans }}</label><input id="withdrawal-name-{{ elementId }}" name="name" required maxlength="255" autocomplete="name" value="{{ values.name }}"></div>
+                <div><label for="withdrawal-contract-{{ elementId }}">{{ 'withdrawal.contract'|trans }}</label><textarea id="withdrawal-contract-{{ elementId }}" name="contractReference" required maxlength="2000">{{ values.contractReference }}</textarea></div>
+                <div><label for="withdrawal-email-{{ elementId }}">{{ 'withdrawal.email'|trans }}</label><input id="withdrawal-email-{{ elementId }}" name="email" type="email" required maxlength="255" autocomplete="email" value="{{ values.email }}"></div>
+                <div class="withdrawal-honeypot" aria-hidden="true"><label for="withdrawal-website-{{ elementId }}">Website</label><input id="withdrawal-website-{{ elementId }}" name="website" tabindex="-1" autocomplete="off"></div>
+                <button type="submit">{{ 'withdrawal.next'|trans }}</button>
+            </form>
+        {% endif %}
+    </section>
+    <style>.withdrawal{max-width:42rem}.withdrawal form>div:not(.withdrawal-honeypot){margin:1rem 0}.withdrawal label{display:block;font-weight:700}.withdrawal input:not([type=hidden]),.withdrawal textarea{box-sizing:border-box;width:100%;padding:.6rem}.withdrawal button{padding:.8rem 1.25rem;font-weight:700;cursor:pointer}.withdrawal-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}</style>
+{% endblock %}

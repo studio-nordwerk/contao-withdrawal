@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Nordwerk\WithdrawalBundle\:
+    resource: "../src/"
+    exclude: "../src/{ContaoManager,DependencyInjection,NordwerkWithdrawalBundle.php}"
+
+  Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer:
+    arguments:
+      $merchantEmail: "%env(WITHDRAWAL_MERCHANT_EMAIL)%"
+
+  Nordwerk\WithdrawalBundle\InsertTag\WithdrawalLinkInsertTag:
+    arguments:
+      $path: "%env(default:withdrawal_path:WITHDRAWAL_PATH)%"
+
+parameters:
+  withdrawal_path: "/withdrawal"

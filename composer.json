@@ -1,0 +1,23 @@
+{
+  "name": "nordwerk/contao-withdrawal-bundle",
+  "description": "Shop-independent withdrawal function for Contao",
+  "license": "MIT",
+  "type": "contao-bundle",
+  "require": {
+    "php": "^8.2",
+    "contao/core-bundle": "^5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Nordwerk\\WithdrawalBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Nordwerk\\WithdrawalBundle\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Nordwerk\\WithdrawalBundle\\ContaoManager\\Plugin"
+  }
+}

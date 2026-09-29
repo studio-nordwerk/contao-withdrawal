@@ -1,0 +1,6 @@
+CTE:
+  withdrawal:
+    - Withdrawal function
+    - Two-step withdrawal without login
+MOD:
+  withdrawals: Withdrawals
