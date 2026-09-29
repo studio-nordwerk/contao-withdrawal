@@ -11,6 +11,7 @@ use Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer;
 use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -35,6 +36,43 @@ final class MailConcurrencyTest extends TestCase
     {
         $this->connection->delete('tl_withdrawal', ['id' => $this->id]);
         $this->connection->close();
+    }
+
+    public function testRejectedConsumerAddressDoesNotBlockMerchantAndRetrySkipsMerchant(): void
+    {
+        $transport = $this->createMock(MailerInterface::class);
+        $attempts = [];
+        $transport
+            ->method('send')
+            ->willReturnCallback(
+                static function (Email $email) use (&$attempts): void {
+                    $recipient = $email->getTo()[0]->getAddress();
+                    $attempts[] = $recipient;
+                    if ('ada@example.test' === $recipient) {
+                        throw new \RuntimeException('Mailbox rejected');
+                    }
+                },
+            )
+        ;
+        $mailer = new WithdrawalMailer($transport, $this->twig, $this->repository, 'shop@example.test');
+
+        for ($i = 0; $i < 2; ++$i) {
+            $row = $this->repository->find($this->id);
+            $this->assertNotNull($row);
+
+            try {
+                $mailer->sendPending($row);
+                $this->fail('Expected failed consumer delivery.');
+            } catch (\RuntimeException) {
+                $stored = $this->repository->find($this->id);
+                $this->assertNotNull($stored);
+                $this->assertSame('pending', $stored['mailStatus']);
+            }
+        }
+        $this->assertSame(['ada@example.test', 'shop@example.test', 'ada@example.test'], $attempts);
+        $stored = $this->repository->find($this->id);
+        $this->assertNotNull($stored);
+        $this->assertNotNull($stored['merchantSentAt']);
     }
 
     public function testStalePendingSnapshotDoesNotSendAgain(): void

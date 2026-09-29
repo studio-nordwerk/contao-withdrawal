@@ -41,22 +41,30 @@ final readonly class WithdrawalMailer
         $english = 'en' === $row['locale'];
         $language = $english ? '.en' : '';
 
-        if (null === $row['confirmationSentAt']) {
-            $this->mailer->send((new Email())
-                ->from($this->merchantEmail)
-                ->to($data['email'])
-                ->subject($english ? 'Confirmation of your withdrawal' : 'Eingangsbestätigung Ihres Widerrufs')
-                ->text($this->twig->render('@NordwerkWithdrawal/mail/consumer'.$language.'.txt.twig', $data)));
-            $this->repository->markSent((int) $row['id'], 'confirmationSentAt', new \DateTimeImmutable('now', new \DateTimeZone('UTC')));
+        $failure = null;
+
+        foreach ([
+            ['confirmationSentAt', $data['email'], $english ? 'Confirmation of your withdrawal' : 'Eingangsbestätigung Ihres Widerrufs', 'consumer'],
+            ['merchantSentAt', $this->merchantEmail, $english ? 'New withdrawal' : 'Neuer Widerruf', 'merchant'],
+        ] as [$column, $recipient, $subject, $template]) {
+            if (null !== $row[$column]) {
+                continue;
+            }
+
+            try {
+                $this->mailer->send((new Email())
+                    ->from($this->merchantEmail)
+                    ->to($recipient)
+                    ->subject($subject)
+                    ->text($this->twig->render('@NordwerkWithdrawal/mail/'.$template.$language.'.txt.twig', $data)));
+                $this->repository->markSent((int) $row['id'], $column, new \DateTimeImmutable('now', new \DateTimeZone('UTC')));
+            } catch (\Throwable $exception) {
+                $failure ??= $exception;
+            }
         }
 
-        if (null === $row['merchantSentAt']) {
-            $this->mailer->send((new Email())
-                ->from($this->merchantEmail)
-                ->to($this->merchantEmail)
-                ->subject($english ? 'New withdrawal' : 'Neuer Widerruf')
-                ->text($this->twig->render('@NordwerkWithdrawal/mail/merchant'.$language.'.txt.twig', $data)));
-            $this->repository->markSent((int) $row['id'], 'merchantSentAt', new \DateTimeImmutable('now', new \DateTimeZone('UTC')));
+        if (null !== $failure) {
+            throw $failure;
         }
     }
 }
