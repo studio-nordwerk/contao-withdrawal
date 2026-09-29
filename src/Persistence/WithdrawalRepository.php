@@ -22,7 +22,7 @@ final readonly class WithdrawalRepository
             'contractReference' => $declaration->contractReference,
             'email' => $declaration->email,
             'locale' => str_starts_with($locale, 'en') ? 'en' : 'de',
-            'submittedAt' => $submittedAt->format('Y-m-d\\TH:i:s.u\\Z'),
+            'submittedAt' => $submittedAt->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\\TH:i:s.u\\Z'),
             'status' => 'new',
             'mailStatus' => 'pending',
         ]);
@@ -87,7 +87,7 @@ final readonly class WithdrawalRepository
             throw new \InvalidArgumentException('Invalid mail column.');
         }
 
-        $this->connection->update('tl_withdrawal', [$column => $at->format('Y-m-d\\TH:i:s.u\\Z')], ['id' => $id]);
+        $this->connection->update('tl_withdrawal', [$column => $at->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\\TH:i:s.u\\Z')], ['id' => $id]);
         $this->connection->executeStatement("UPDATE tl_withdrawal SET mailStatus = CASE WHEN confirmationSentAt IS NOT NULL AND merchantSentAt IS NOT NULL THEN 'sent' ELSE 'pending' END WHERE id = ?", [$id]);
     }
 }

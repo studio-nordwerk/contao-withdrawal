@@ -12,6 +12,7 @@ use Contao\CoreBundle\Twig\FragmentTemplate;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Nordwerk\WithdrawalBundle\Domain\WithdrawalDeclaration;
 use Nordwerk\WithdrawalBundle\Event\WithdrawalSubmittedEvent;
+use Nordwerk\WithdrawalBundle\Http\ReceiptTime;
 use Nordwerk\WithdrawalBundle\Mail\WithdrawalMailer;
 use Nordwerk\WithdrawalBundle\Persistence\WithdrawalRepository;
 use Psr\Log\LoggerInterface;
@@ -33,7 +34,7 @@ final class WithdrawalController extends AbstractContentElementController
 
     protected function getResponse(FragmentTemplate $template, ContentModel $model, Request $request): Response
     {
-        $receivedAt = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $receivedAt = ReceiptTime::fromRequest($request);
         $session = $request->getSession();
         $flowId = (string) $request->request->get('withdrawal_flow', '');
         if (!preg_match('/^[a-f0-9]{64}$/D', $flowId)) {

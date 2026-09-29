@@ -5,7 +5,7 @@
         <h2 id="withdrawal-title">{{ 'withdrawal.title'|trans }}</h2>
         {% if stage == 'success' %}
             <p role="status">{{ 'withdrawal.success'|trans }}</p>
-            <p>{{ 'withdrawal.received'|trans }} <time datetime="{{ submittedAt|date('c') }}">{{ submittedAt|date('d.m.Y H:i:s', 'Europe/Berlin') }} {{ 'withdrawal.clock'|trans }}</time></p>
+            <p>{{ 'withdrawal.received'|trans }} <time datetime="{{ submittedAt|date('c', 'Europe/Berlin') }}">{{ submittedAt|date('d.m.Y H:i:s P', 'Europe/Berlin') }} {{ 'withdrawal.clock'|trans }}</time></p>
         {% elseif stage == 'review' %}
             <p>{{ 'withdrawal.review'|trans }}</p>
             <dl>
