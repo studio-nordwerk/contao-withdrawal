@@ -63,7 +63,7 @@ final class WithdrawalController extends AbstractContentElementController
                 ];
                 $errors = WithdrawalDeclaration::validate(...array_values($values));
 
-                if ('' !== (string) $request->request->get('website') || !isset($flow['startedAt']) || time() - (int) $flow['startedAt'] < 1) {
+                if ('' !== (string) $request->request->get('website')) {
                     $errors['spam'] = 'spam';
                 }
 
@@ -71,7 +71,7 @@ final class WithdrawalController extends AbstractContentElementController
                     // A new immutable snapshot also protects an older review after Back/Edit.
                     $flowId = bin2hex(random_bytes(32));
                     $key = 'withdrawal_flow_'.$model->id.'_'.$flowId;
-                    $flow = ['token' => $flowId, 'values' => $values, 'startedAt' => $flow['startedAt']];
+                    $flow = ['token' => $flowId, 'values' => $values];
                     $session->set($key, $flow);
                     $stage = 'review';
                 }
@@ -121,11 +121,6 @@ final class WithdrawalController extends AbstractContentElementController
                 $stage = 'success';
                 $template->set('submittedAt', (new \DateTimeImmutable((string) $row['submittedAt'], new \DateTimeZone('UTC')))->setTimezone(new \DateTimeZone('Europe/Berlin')));
             }
-        }
-
-        if ('form' === $stage && !isset($flow['startedAt'])) {
-            $flow = ['startedAt' => time()];
-            $session->set($key, $flow);
         }
 
         if ('review' === $stage) {

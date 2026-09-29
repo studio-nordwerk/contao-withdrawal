@@ -12,3 +12,4 @@ withdrawal:
   received: "Received:"
   clock: "(Europe/Berlin)"
   error: "Please check your details and try again."
+  spam: "An automatically filled protection field was cleared. Please check your details and choose “Review details” again."

@@ -12,3 +12,4 @@ withdrawal:
   received: "Eingang:"
   clock: "Uhr (Europe/Berlin)"
   error: "Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut."
+  spam: "Ein automatisch ausgefülltes Schutzfeld wurde geleert. Bitte prüfen Sie Ihre Angaben und wählen Sie erneut „Angaben prüfen“."

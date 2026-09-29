@@ -41,3 +41,31 @@ test("each tab confirms exactly the declaration it reviewed", async ({ page, con
   await page.reload();
   await expect(page.getByText("Ihr Widerruf ist eingegangen.")).toBeVisible();
 });
+
+test("autofill can proceed immediately without a minimum dwell time", async ({ page }) => {
+  await page.goto("/withdrawal");
+  const response = await page.request.post("/withdrawal", {
+    form: {
+      REQUEST_TOKEN: await page.locator("[name=REQUEST_TOKEN]").inputValue(),
+      withdrawal_element: await page.locator("[name=withdrawal_element]").inputValue(),
+      withdrawal_flow: await page.locator("[name=withdrawal_flow]").inputValue(),
+      withdrawal_action: "review",
+      name: "Fast Autofill",
+      contractReference: "FAST",
+      email: "fast@example.test",
+    },
+  });
+  expect(await response.text()).toContain('value="confirm"');
+});
+
+test("an autofilled honeypot can be recovered without hidden field access", async ({ page }) => {
+  await page.goto("/withdrawal");
+  await page.locator("[name=name]").fill("Autofill Tester");
+  await page.locator("[name=contractReference]").fill("AUTOFILL");
+  await page.locator("[name=email]").fill("autofill@example.test");
+  await page.locator("[name=website]").fill("https://example.test", { force: true });
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("alert")).toContainText("automatisch");
+  await page.getByRole("button", { name: "Angaben prüfen" }).click();
+  await expect(page.getByRole("button", { name: "Widerruf bestätigen" })).toBeVisible();
+});
