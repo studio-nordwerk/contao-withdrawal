@@ -2,13 +2,15 @@
 
 Shopunabhängige elektronische Widerrufsfunktion nach [§ 356a BGB](https://www.gesetze-im-internet.de/bgb/__356a.html): zwei Schritte, kein Login, kein JavaScript, drei fachliche Pflichtangaben. MIT-Lizenz.
 
-**Voraussetzungen:** Contao `^5.7`, PHP `^8.3`, MySQL/MariaDB und ein konfigurierter Symfony-Mailtransport. Getestet mit **Contao 5.7.13, PHP 8.3.35, MariaDB 11.8.9**, in `dev` und `prod` mit Seiten-Cache. **Contao 5.3 ist nicht freigegeben und wird nicht getestet.**
+**Voraussetzungen:** Contao `^5.7.12`, PHP `^8.3`, MySQL/MariaDB und ein konfigurierter Symfony-Mailtransport. Getestet mit **Contao 5.7.13, PHP 8.3.35, MariaDB 11.8.9**, in `dev` und `prod` mit Seiten-Cache. **Contao 5.3 ist nicht freigegeben und wird nicht getestet.**
 
 ## Deutsch
 
 Das Bundle stellt den Ablauf bereit. Ob es für einen konkreten Vertrag und die konkrete Händlerwebsite rechtlich geeignet ist, muss gesondert geprüft werden. **Keine Rechtsberatung.** Die Prüfung der Berechtigung erfolgt nach Eingang; das Formular lehnt keine Erklärung wegen einer vermuteten Fristüberschreitung ab.
 
 ### Installation und Einrichtung
+
+**Vorher Contao aktualisieren.** Die Pakete brauchen Contao 5.7.12 oder neuer. Bitte zuerst im Contao Manager alle Pakete aktualisieren und danach die ZIPs hochladen. Hintergrund: Ältere 5.7-Versionen vertragen `league/flysystem-bundle` 3.7 nicht, das der Manager beim Upload mit aktualisiert; `contao-setup` bricht dann mit „Class AdapterDefinitionFactory not found“ ab.
 
 1. Nach Veröffentlichung `nordwerk/contao-withdrawal-bundle` mit Composer oder dem Contao Manager installieren und die Contao-Datenbankmigration ausführen.
 2. Unter **Inhalte → Widerruf einrichten** die Absender- und Händleradresse speichern; Symfony Mailer mit einem zustellfähigen Transport konfigurieren. `WITHDRAWAL_MERCHANT_EMAIL` ist ein optionaler Override. Der Versand verwendet **synchron den Standardtransport** (`mailer.default_transport`), unabhängig von Messenger-Routing. Ein im Seitenstamm gewählter anderer Transport wird nicht übernommen. Keine `null://`-Konfiguration im Betrieb verwenden.
@@ -73,7 +75,7 @@ Der Export wird automatisch geprüft. Ein tatsächlicher ZIP-Upload und eine Ins
 
 This MIT bundle provides a shop-independent two-step withdrawal function under [section 356a BGB](https://www.gesetze-im-internet.de/bgb/__356a.html). **This is not legal advice.** Merchants must assess applicability, placement and operation for their actual website. Eligibility is reviewed after receipt; the form does not reject declarations based on assumed deadlines.
 
-Requires **Contao `^5.7`, PHP `^8.3`, MySQL/MariaDB and Symfony Mailer**. Tested with Contao 5.7.13, PHP 8.3.35 and MariaDB 11.8.9 in development and production with page caching. **Contao 5.3 is not tested or advertised as supported.**
+Requires **Contao `^5.7.12`, PHP `^8.3`, MySQL/MariaDB and Symfony Mailer**. Tested with Contao 5.7.13, PHP 8.3.35 and MariaDB 11.8.9 in development and production with page caching. **Contao 5.3 is not tested or advertised as supported.**
 
 After publication, install `nordwerk/contao-withdrawal-bundle`, run Contao's database migration, and set the merchant email and public path under **Content → Withdrawal settings**. Configure a working default Symfony mail transport. `WITHDRAWAL_MERCHANT_EMAIL` and `WITHDRAWAL_PATH` are optional overrides. The bundle sends synchronously through `mailer.default_transport`, bypassing Messenger queues and per-page-root transport selection. Create an unprotected page containing **Withdrawal function**, and place `{{withdrawal_link}}` prominently in the footer of every relevant page. One merchant address and path apply to the whole installation. A subdirectory installation's base path is added automatically, including in ESI subrequests.
 
