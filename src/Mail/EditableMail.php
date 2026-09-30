@@ -9,11 +9,13 @@ final class EditableMail
     public const FIELDS = ['subject', 'preheader', 'introduction', 'closing', 'greeting', 'signature'];
 
     private const TOKENS = [
+        'shop_payment_reminder' => ['customer.name', 'order.number'],
         'shop_customer' => ['customer.name', 'order.number'],
         'shop_merchant' => ['customer.name', 'order.number'],
         'shop_paid' => ['customer.name', 'order.number'],
         'shop_dispatched' => ['customer.name', 'order.number'],
         'shop_canceled' => ['customer.name', 'order.number'],
+        'seminar_payment_reminder' => ['customer.name', 'booking.reference', 'event.title', 'event.date'],
         'seminar_confirmation' => ['customer.name', 'booking.reference', 'event.title', 'event.date'],
         'seminar_merchant' => ['customer.name', 'booking.reference', 'event.title', 'event.date'],
         'seminar_waiting' => ['customer.name', 'booking.reference', 'event.title', 'event.date'],
@@ -53,6 +55,8 @@ final class EditableMail
         $en = 'en' === $locale;
         $du = 'du' === $voice;
         $titles = [
+            'shop_payment_reminder' => ['Zahlungserinnerung zu {{ order.number }}', 'Payment reminder for {{ order.number }}'],
+            'seminar_payment_reminder' => ['Zahlungserinnerung zu {{ booking.reference }}', 'Payment reminder for {{ booking.reference }}'],
             'shop_customer' => ['Ihre Bestellung {{ order.number }}', 'Your order {{ order.number }}'],
             'shop_merchant' => ['Neue Bestellung {{ order.number }}', 'New order {{ order.number }}'],
             'shop_paid' => ['Zahlung zu {{ order.number }} eingegangen', 'Payment received for {{ order.number }}'],
@@ -69,6 +73,8 @@ final class EditableMail
             'withdrawal_merchant' => ['Neuer Widerruf', 'New withdrawal'],
         ];
         $intro = [
+            'shop_payment_reminder' => ['das Zahlungsziel Ihrer Bestellung ist abgelaufen. Bitte überweisen Sie den offenen Betrag mit den Bankdaten unten. Falls Sie bereits überwiesen haben, melden Sie sich bitte bei uns.', 'your order payment is overdue. Please transfer the outstanding amount using the bank details below. If you have already paid, please contact us.'],
+            'seminar_payment_reminder' => ['das Zahlungsziel Ihrer Buchung ist abgelaufen. Bitte überweisen Sie den offenen Betrag mit den Bankdaten unten. Falls Sie bereits überwiesen haben, melden Sie sich bitte bei uns.', 'your booking payment is overdue. Please transfer the outstanding amount using the bank details below. If you have already paid, please contact us.'],
             'shop_customer' => ['vielen Dank für Ihre Bestellung. Hier finden Sie die Angaben zu Ihrem Vertrag.', 'thank you for your order. Your contract details follow.'],
             'shop_merchant' => ['eine neue Bestellung ist eingegangen.', 'a new order has arrived.'],
             'shop_paid' => ['Ihre Zahlung ist eingegangen. Die Rechnung finden Sie im Anhang.', 'we have received your payment. Your invoice is attached.'],

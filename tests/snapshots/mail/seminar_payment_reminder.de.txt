@@ -1,0 +1,16 @@
+Guten Tag Ada Beispiel,
+
+das Zahlungsziel Ihrer Buchung ist abgelaufen. Bitte überweisen Sie den offenen Betrag mit den Bankdaten unten. Falls Sie bereits überwiesen haben, melden Sie sich bitte bei uns.
+
+Beispielprodukt oder Termin | 2 × 25,00 € | 50,00 €
+Gesamt: 50,00 €
+
+Feste Buchungs- oder Vertragsangaben (Beispiel)
+Referenz: MS-000123
+Eingang: 15.10.2026, 10:30 Uhr
+Anbieter: Nordwerk, Musterstraße 1, 12345 Berlin
+Widerrufsbelehrung und Musterformular: Stand bei Vertragsschluss
+
+Bei Fragen antworten Sie gern auf diese E-Mail.
+
+Freundliche Grüße
