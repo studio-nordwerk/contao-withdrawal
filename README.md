@@ -12,7 +12,7 @@ Das Bundle stellt den Ablauf bereit. Ob es für einen konkreten Vertrag und die 
 
 **Vorher Contao aktualisieren.** Die Pakete brauchen Contao 5.7.12 oder neuer. Bitte zuerst im Contao Manager alle Pakete aktualisieren und danach die ZIPs hochladen. Hintergrund: Ältere 5.7-Versionen vertragen `league/flysystem-bundle` 3.7 nicht, das der Manager beim Upload mit aktualisiert; `contao-setup` bricht dann mit „Class AdapterDefinitionFactory not found“ ab.
 
-1. Nach Veröffentlichung `nordwerk/contao-withdrawal-bundle` mit Composer oder dem Contao Manager installieren und die Contao-Datenbankmigration ausführen.
+1. `nordwerk/contao-withdrawal-bundle` im Contao Manager suchen oder mit `composer require nordwerk/contao-withdrawal-bundle` installieren und die Contao-Datenbankmigration ausführen.
 2. Unter **Inhalte → Widerruf einrichten** die Absender- und Händleradresse speichern; Symfony Mailer mit einem zustellfähigen Transport konfigurieren. `WITHDRAWAL_MERCHANT_EMAIL` ist ein optionaler Override. Der Versand verwendet **synchron den Standardtransport** (`mailer.default_transport`), unabhängig von Messenger-Routing. Ein im Seitenstamm gewählter anderer Transport wird nicht übernommen. Keine `null://`-Konfiguration im Betrieb verwenden.
 3. Eine öffentliche, ungeschützte Seite mit dem Inhaltselement **Widerrufsfunktion** anlegen. Den öffentlichen Pfad unter **Widerruf einrichten** speichern, etwa `/withdrawal`, `/service/widerruf` oder `/withdrawal.html`. `WITHDRAWAL_PATH` ist ein optionaler Override. Der Installations-Unterpfad wird automatisch ergänzt. Ein Pfad und eine Händleradresse gelten für die gesamte Installation.
 4. `{{withdrawal_link}}` im Footer jeder relevanten Seite einbinden. In Contao 5.7 kann dafür ein Inhaltselement des **Themes** verwendet werden. Lesbarkeit, Kontrast, Hervorhebung und Erreichbarkeit während der gesamten Widerrufsfrist im tatsächlichen Theme prüfen. Keine Anmeldung, Consent-Sperre, zeitgesteuerte Ausblendung oder Cache-Regel vor das Formular setzen.
@@ -59,7 +59,7 @@ Demo: `http://localhost:8081/withdrawal`; Mailpit: `http://localhost:8026`. `mak
 
 ### Veröffentlichung und ZIP für den Contao Manager
 
-[Roadmap](docs/roadmap.md) und [Auditbericht](docs/audit.md) dokumentieren Befunde, Tests und offene Betriebsfragen. GitHub und Packagist sind noch nicht eingerichtet.
+[Roadmap](docs/roadmap.md) und [Auditbericht](docs/audit.md) dokumentieren Befunde, Tests und offene Betriebsfragen. Veröffentlicht auf GitHub und [Packagist](https://packagist.org/packages/nordwerk/contao-withdrawal-bundle).
 
 Ein Manager-Artefakt benötigt eine `composer.json` **im ZIP-Wurzelverzeichnis mit `version`**. Der Build fügt die Versionsangabe nur dem Archiv hinzu; die Composer-Datei für Git/Packagist bleibt ohne fest eingetragene Version. Das folgt der [offiziellen Contao-Anleitung](https://docs.contao.org/5.x/dev/guides/publishing-bundles/).
 
@@ -69,7 +69,7 @@ make artifact VERSION=0.1.0
 # Ergebnis: dist/contao-withdrawal-0.1.0.zip, Inhalt aus HEAD
 ```
 
-Der Export wird automatisch geprüft. Ein tatsächlicher ZIP-Upload und eine Installation im Manager bleiben vor dem ersten Release separat zu testen. Der Audit legt kein Remote an und veröffentlicht nichts.
+Der Export wird automatisch geprüft. Releases mit Manager-ZIP stehen auf GitHub; Packagist aktualisiert sich über den GitHub-Hook.
 
 ## English
 
@@ -91,7 +91,7 @@ The bundle stores no IP or user agent and logs only record IDs and failure class
 
 German and English text mail templates can be overridden; retain the declaration, identifying details and receipt date/time. `WithdrawalSubmittedEvent` runs after persistence and the first mail attempt. It is synchronous and is not a durable event outbox; integrations need bounded listeners and their own reconciliation after failures.
 
-Development: copy `.env.example` to `.env`, replace the secret/password, then run `make up` and `make reset && make check`. Production checks: `APP_ENV=prod make reset && APP_ENV=prod make check`. The demo uses ports 8081/8026. `make reset` discards its temporary database. GitHub Actions runs `make check` in both modes. Package exports exclude development files. `make artifact VERSION=0.1.0` builds a versioned Manager ZIP from the last commit; choose the intended release version first. Actual Manager upload, GitHub publication and Packagist registration remain release tasks.
+Development: copy `.env.example` to `.env`, replace the secret/password, then run `make up` and `make reset && make check`. Production checks: `APP_ENV=prod make reset && APP_ENV=prod make check`. The demo uses ports 8081/8026. `make reset` discards its temporary database. GitHub Actions runs `make check` in both modes. Package exports exclude development files. `make artifact VERSION=0.1.0` builds a versioned Manager ZIP from the last commit; choose the intended release version first. Published on GitHub and Packagist; tags `v*` publish the stable channel.
 
 ## Lizenz / License
 
