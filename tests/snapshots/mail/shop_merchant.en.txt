@@ -1,16 +1,15 @@
-Hello Ada Beispiel,
+Hello,
 
-a new order has arrived.
+a new order from Ada Beispiel has arrived.
 
-Sample product or event | 2 × 25,00 € | 50,00 €
+Sample product or event (100 g) | 2 × 25,00 € | 50,00 €
 Total: 50,00 €
+
+Reference: MS-000123
+Date: 15/10/2026, 10:30
 
 Fixed booking or contract details (sample)
 Reference: MS-000123
 Received: 15 October 2026, 10:30
 Provider: Nordwerk, Sample Street 1, 12345 Berlin
 Withdrawal notice and form: version at contract conclusion
-
-Please contact us if you have any questions.
-
-Kind regards

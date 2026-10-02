@@ -2,8 +2,17 @@ Guten Tag Ada Beispiel,
 
 vielen Dank für Ihre Teilnahme. Ihre Bestätigung finden Sie im Anhang.
 
-Beispielprodukt oder Termin | 2 × 25,00 € | 50,00 €
+Beispielprodukt oder Termin (100 g) | 2 × 25,00 € | 50,00 €
 Gesamt: 50,00 €
+
+Referenz: MS-000123
+Datum: 15.10.2026, 10:30 Uhr
+
+Bei Fragen antworten Sie gern auf diese E-Mail.
+
+Freundliche Grüße
+
+— Ihre Vertragsunterlagen —
 
 Feste Buchungs- oder Vertragsangaben (Beispiel)
 Referenz: MS-000123
@@ -11,6 +20,4 @@ Eingang: 15.10.2026, 10:30 Uhr
 Anbieter: Nordwerk, Musterstraße 1, 12345 Berlin
 Widerrufsbelehrung und Musterformular: Stand bei Vertragsschluss
 
-Bei Fragen antworten Sie gern auf diese E-Mail.
-
-Freundliche Grüße
+Nordwerk · Musterstraße 1 · 12345 Berlin

@@ -67,19 +67,27 @@ final class MailEditor
     public static function preview(MailDocument $document, array $options, string $kind, string $locale): array
     {
         $en = 'en' === $locale;
+        $withdrawal = str_starts_with($kind, 'withdrawal_');
+        $merchant = str_ends_with($kind, '_merchant');
         $sections = [[
             'title' => $en ? 'Fixed booking or contract details (sample)' : 'Feste Buchungs- oder Vertragsangaben (Beispiel)',
             'text' => $en
                 ? "Reference: MS-000123\nReceived: 15 October 2026, 10:30\nProvider: Nordwerk, Sample Street 1, 12345 Berlin\nWithdrawal notice and form: version at contract conclusion"
                 : "Referenz: MS-000123\nEingang: 15.10.2026, 10:30 Uhr\nAnbieter: Nordwerk, Musterstraße 1, 12345 Berlin\nWiderrufsbelehrung und Musterformular: Stand bei Vertragsschluss",
-        ]];
-        $items = str_starts_with($kind, 'withdrawal_') ? [] : [[
+        ] + ($withdrawal || $merchant ? [] : ['style' => 'legal'])];
+        $items = $withdrawal ? [] : [[
             'name' => $en ? 'Sample product or event' : 'Beispielprodukt oder Termin',
+            'meta' => $en ? '100 g' : '100 g',
             'quantity' => '2', 'unit' => '25,00 €', 'amount' => '50,00 €',
         ]];
-        $totals = [] === $items ? [] : [['label' => $en ? 'Total' : 'Gesamt', 'amount' => '50,00 €']];
+        $totals = [] === $items ? [] : [['label' => $en ? 'Total' : 'Gesamt', 'amount' => '50,00 €', 'strong' => true]];
+        $facts = $withdrawal ? [] : [
+            ['label' => $en ? 'Reference' : 'Referenz', 'value' => 'MS-000123'],
+            ['label' => $en ? 'Date' : 'Datum', 'value' => $en ? '15/10/2026, 10:30' : '15.10.2026, 10:30 Uhr'],
+        ];
+        $footer = $withdrawal || $merchant ? '' : ($en ? 'Nordwerk · Sample Street 1 · 12345 Berlin' : 'Nordwerk · Musterstraße 1 · 12345 Berlin');
 
-        return $document->render($kind, $locale, MailOptions::fields($options, $kind, $locale), self::sampleTokens($kind), $sections, (string) ($options['senderName'] ?: 'Nordwerk'), $items, $totals, (string) $options['accent'], logo: null !== MailOptions::logoPath($options));
+        return $document->render($kind, $locale, MailOptions::fields($options, $kind, $locale), self::sampleTokens($kind), $sections, (string) ($options['senderName'] ?: 'Nordwerk'), $items, $totals, (string) $options['accent'], logo: null !== MailOptions::logoPath($options), facts: $facts, footer: $footer);
     }
 
     /**

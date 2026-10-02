@@ -76,12 +76,12 @@ final class EditableMail
             'shop_payment_reminder' => ['das Zahlungsziel Ihrer Bestellung ist abgelaufen. Bitte überweisen Sie den offenen Betrag mit den Bankdaten unten. Falls Sie bereits überwiesen haben, melden Sie sich bitte bei uns.', 'your order payment is overdue. Please transfer the outstanding amount using the bank details below. If you have already paid, please contact us.'],
             'seminar_payment_reminder' => ['das Zahlungsziel Ihrer Buchung ist abgelaufen. Bitte überweisen Sie den offenen Betrag mit den Bankdaten unten. Falls Sie bereits überwiesen haben, melden Sie sich bitte bei uns.', 'your booking payment is overdue. Please transfer the outstanding amount using the bank details below. If you have already paid, please contact us.'],
             'shop_customer' => ['vielen Dank für Ihre Bestellung. Hier finden Sie die Angaben zu Ihrem Vertrag.', 'thank you for your order. Your contract details follow.'],
-            'shop_merchant' => ['eine neue Bestellung ist eingegangen.', 'a new order has arrived.'],
+            'shop_merchant' => ['eine neue Bestellung von {{ customer.name }} ist eingegangen.', 'a new order from {{ customer.name }} has arrived.'],
             'shop_paid' => ['Ihre Zahlung ist eingegangen. Die Rechnung finden Sie im Anhang.', 'we have received your payment. Your invoice is attached.'],
             'shop_dispatched' => ['Ihre Bestellung ist versendet beziehungsweise abholbereit.', 'your order has been dispatched or is ready for collection.'],
             'shop_canceled' => ['Ihre Bestellung wurde storniert. Eine Stornorechnung finden Sie gegebenenfalls im Anhang.', 'your order has been canceled. A cancellation invoice is attached where applicable.'],
             'seminar_confirmation' => ['vielen Dank für Ihre Buchung. Die verbindlichen Angaben folgen unten.', 'thank you for booking. Your binding booking details follow.'],
-            'seminar_merchant' => ['eine neue Seminarbuchung ist eingegangen.', 'a new seminar booking has arrived.'],
+            'seminar_merchant' => ['eine neue Seminarbuchung von {{ customer.name }} ist eingegangen.', 'a new seminar booking from {{ customer.name }} has arrived.'],
             'seminar_waiting' => ['Sie stehen auf der Warteliste. Wir melden uns, sobald ein Platz frei wird.', 'you are on the waiting list. We will contact you when a place opens.'],
             'seminar_promotion' => ['ein Platz ist frei geworden. Die Angaben zu Ihrer Buchung folgen unten.', 'a place has opened. Your booking details follow.'],
             'seminar_reminder' => ['Ihr Seminar beginnt bald. Wir freuen uns auf Sie.', 'your seminar starts soon. We look forward to seeing you.'],
@@ -114,6 +114,12 @@ final class EditableMail
         ];
         $title = $du && !$en ? ($duTitles[$kind] ?? $titles[$kind][0]) : $titles[$kind][$en ? 1 : 0];
         $opening = $du && !$en ? ($duIntro[$kind] ?? $intro[$kind][0]) : $intro[$kind][$en ? 1 : 0];
+
+        // Mails to the shop or course owner are notes to oneself: no customer
+        // salutation, no sign-off.
+        if (str_ends_with($kind, '_merchant')) {
+            return ['subject' => $title, 'preheader' => $opening, 'introduction' => ($en ? 'Hello,' : 'Hallo,')."\n\n".$opening, 'closing' => '', 'greeting' => '', 'signature' => ''];
+        }
 
         return [
             'subject' => $title,
