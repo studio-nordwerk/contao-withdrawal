@@ -21,6 +21,8 @@ assert manifest["type"] == "contao-bundle"
 assert manifest["license"] == "MIT"
 assert {"widerrufsbutton", "356a-bgb"}.issubset(manifest.get("keywords", []))
 assert "356a" in manifest["description"]
+# The Contao Manager compares against 5.7.0 for a root constraint of 5.7.*, so the require must admit 5.7.0; the conflict keeps older 5.7 releases out.
+assert manifest["require"]["contao/core-bundle"] == "^5.7" and manifest["conflict"]["contao/core-bundle"] == "<5.7.12"
 assert "make check" in Path(".github/workflows/check.yaml").read_text()
 print(f"Package export verified: {len(names)} entries, no development files.")
 
