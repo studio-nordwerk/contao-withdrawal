@@ -14,8 +14,8 @@ $GLOBALS['TL_DCA']['tl_withdrawal'] = [
     'list' => [
         'sorting' => ['mode' => 1, 'fields' => ['id'], 'flag' => 12, 'panelLayout' => 'filter;search,limit'],
         'label' => ['fields' => ['submittedAt', 'consumerName', 'contractReference', 'status'], 'format' => '%s | %s | %s | %s'],
-        'global_operations' => ['all' => ['href' => 'act=select', 'class' => 'header_edit_all', 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"']],
-        'operations' => ['edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'], 'show' => ['href' => 'act=show', 'icon' => 'show.svg']],
+        'global_operations' => ['all'],
+        'operations' => ['edit', 'show'],
     ],
     'palettes' => ['default' => '{withdrawal_legend},consumerName,contractReference,email,submittedAt;{review_legend},status;{mail_legend},mailStatus,confirmationSentAt,merchantSentAt'],
     'fields' => [

@@ -71,8 +71,8 @@
 
 {# Contao adds each stylesheet once per page (by name) to the document head. #}
 {% block style %}
-    {% add "withdrawal_essentials" to head %}<style>.withdrawal label{display:block}.withdrawal input:not([type=hidden]),.withdrawal textarea{box-sizing:border-box;max-width:100%}.withdrawal-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}</style>{% endadd %}
+    {% add 'withdrawal_essentials' to head %}<style>.withdrawal label{display:block}.withdrawal input:not([type=hidden]),.withdrawal textarea{box-sizing:border-box;max-width:100%}.withdrawal-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}</style>{% endadd %}
     {% if baseStylesEnabled %}
-        {% add "withdrawal_base" to head %}<link rel="stylesheet" href="{{ asset('withdrawal-base.css', 'nordwerkwithdrawal') }}">{% endadd %}
+        {% add 'withdrawal_base' to head %}<link rel="stylesheet" href="{{ asset('withdrawal-base.css', 'nordwerk_withdrawal') }}">{% endadd %}
     {% endif %}
 {% endblock %}

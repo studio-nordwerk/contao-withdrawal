@@ -62,7 +62,7 @@ final readonly class WithdrawalSettings
     public function merchantEmail(): string
     {
         $email = $this->override('WITHDRAWAL_MERCHANT_EMAIL') ?: $this->stored()['merchantEmail'];
-        if (false === filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)) {
+        if (!self::isValidMerchantEmail($email)) {
             throw new \InvalidArgumentException('A valid withdrawal merchant email is required.');
         }
 
@@ -77,10 +77,13 @@ final readonly class WithdrawalSettings
         return $path;
     }
 
+    /**
+     * Programmatic counterpart of the backend form; both use the same validation.
+     */
     public function save(string $email, string $path, bool $baseStylesEnabled = true): void
     {
-        if (false === filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)) {
-            throw new \InvalidArgumentException('Bitte eine gültige Händleradresse eingeben.');
+        if (!self::isValidMerchantEmail($email)) {
+            throw new \InvalidArgumentException('A valid withdrawal merchant email is required.');
         }
         self::assertPath($path);
         $data = ['tstamp' => time(), 'merchantEmail' => $email, 'path' => $path];
@@ -99,10 +102,27 @@ final readonly class WithdrawalSettings
         return $this->connection->createSchemaManager()->introspectTable('tl_withdrawal_settings')->hasColumn('baseStylesEnabled');
     }
 
+    /**
+     * Shared by the backend form (save_callback), save() and the mailer: a plain
+     * address without header injection.
+     */
+    public static function isValidMerchantEmail(string $email): bool
+    {
+        return false !== filter_var($email, FILTER_VALIDATE_EMAIL) && !preg_match('/[\r\n]/', $email);
+    }
+
+    /**
+     * The public path starts with a single slash and has neither query nor fragment.
+     */
+    public static function isValidPath(string $path): bool
+    {
+        return str_starts_with($path, '/') && !str_starts_with($path, '//') && !preg_match('/[\r\n?#]/', $path);
+    }
+
     private static function assertPath(string $path): void
     {
-        if (!str_starts_with($path, '/') || str_starts_with($path, '//') || preg_match('/[\r\n?#]/', $path)) {
-            throw new \InvalidArgumentException('Der Widerrufspfad muss mit einem einzelnen / beginnen und darf keine Query oder Fragment enthalten.');
+        if (!self::isValidPath($path)) {
+            throw new \InvalidArgumentException('The withdrawal path must start with a single / and must not contain a query or fragment.');
         }
     }
 

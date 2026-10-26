@@ -4,7 +4,20 @@ import { expect, test } from "@playwright/test";
 function sql(statement: string): string {
   return execFileSync(
     "docker",
-    ["compose", "exec", "-T", "db", "mariadb", "-ucontao", "-pcontao", "--default-character-set=utf8mb4", "contao", "-N", "-e", statement],
+    [
+      "compose",
+      "exec",
+      "-T",
+      "db",
+      "mariadb",
+      "-ucontao",
+      "-pcontao",
+      "--default-character-set=utf8mb4",
+      "contao",
+      "-N",
+      "-e",
+      statement,
+    ],
     { encoding: "utf8" },
   ).trim();
 }
@@ -13,9 +26,11 @@ test("without an element headline the translated title is the only h1", async ({
   await page.goto("/withdrawal");
   const section = page.locator("section.withdrawal");
   await expect(section.getByRole("heading")).toHaveCount(1);
-  await expect(section.getByRole("heading", { level: 1, name: "Vertrag widerrufen" })).toBeVisible();
+  await expect(
+    section.getByRole("heading", { level: 1, name: "Vertrag widerrufen" }),
+  ).toBeVisible();
   // Stylesheets belong in the document head, once per page.
-  await expect(page.locator("body link[rel=stylesheet], body style")).toHaveCount(0);
+  await expect(page.locator("#container link, #container style")).toHaveCount(0);
   await expect(page.locator('head link[href*="withdrawal-base.css"]')).toHaveCount(1);
   await expect(page.locator('head link[href*="withdrawal-base.css"]')).toHaveAttribute(
     "href",

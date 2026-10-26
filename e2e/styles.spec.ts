@@ -73,22 +73,22 @@ for (const colorScheme of ["light", "dark"] as const) {
 
 test("the base styling can be switched off in the backend", async ({ page }) => {
   await loginBackend(page);
-  const checkbox = page.locator("#ctrl_baseStylesEnabled");
+  const checkbox = page.locator("input[type=checkbox][name=baseStylesEnabled]");
   await expect(checkbox).toBeChecked();
 
   try {
     await checkbox.uncheck();
-    await page.getByRole("button", { name: "Speichern" }).click();
-    await expect(page.getByText("Einstellungen gespeichert.")).toBeVisible();
+    await page.locator("#save").click();
+    await expect(page.locator("input[type=checkbox][name=baseStylesEnabled]")).not.toBeChecked();
     await page.goto("/withdrawal");
     await expect(page.locator('link[href*="withdrawal-base.css"]')).toHaveCount(0);
     await expect(page.locator(".withdrawal input[name=name]")).toBeVisible();
     await expect(page.getByRole("button", { name: "Angaben prüfen" })).toBeVisible();
   } finally {
     await page.goto("/contao?do=withdrawal_settings");
-    await page.locator("#ctrl_baseStylesEnabled").check();
-    await page.getByRole("button", { name: "Speichern" }).click();
-    await expect(page.getByText("Einstellungen gespeichert.")).toBeVisible();
+    await page.locator("input[type=checkbox][name=baseStylesEnabled]").check();
+    await page.locator("#save").click();
+    await expect(page.locator("input[type=checkbox][name=baseStylesEnabled]")).toBeChecked();
   }
   await page.goto("/withdrawal");
   await expect(page.locator('link[href*="withdrawal-base.css"]')).toHaveCount(1);

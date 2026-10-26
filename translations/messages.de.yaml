@@ -1,4 +1,5 @@
 withdrawal:
+  link: Vertrag widerrufen
   title: Vertrag widerrufen
   intro: "Bitte nennen Sie Ihren Namen, Angaben zum Vertrag oder Vertragsteil und eine E-Mail-Adresse für die Eingangsbestätigung."
   name: Name

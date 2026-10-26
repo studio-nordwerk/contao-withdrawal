@@ -25,7 +25,7 @@ assert "356a" in manifest["description"]
 # The Contao Manager compares against 5.7.0 for a root constraint of 5.7.*, so the require must admit 5.7.0; the conflict keeps older 5.7 releases out.
 assert manifest["require"]["contao/core-bundle"] == "^5.7" and manifest["conflict"]["contao/core-bundle"] == "<5.7.12"
 assert "make check" in Path(".github/workflows/check.yaml").read_text()
-# asset('withdrawal-base.css', 'nordwerkwithdrawal') is versioned through public/manifest.json; a stale hash would keep old CSS in browser caches.
+# asset('withdrawal-base.css', 'nordwerk_withdrawal') is versioned through public/manifest.json; a stale hash would keep old CSS in browser caches.
 for asset, versioned in json.loads(Path("public/manifest.json").read_text()).items():
     digest = hashlib.sha256(Path("public", asset).read_bytes()).hexdigest()[:12]
     assert versioned == f"{asset}?v={digest}", f"public/manifest.json is stale: set {asset!r} to {asset}?v={digest}"
