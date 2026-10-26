@@ -11,6 +11,7 @@ use Contao\CoreBundle\InsertTag\ResolvedInsertTag;
 use Contao\CoreBundle\InsertTag\Resolver\InsertTagResolverNestedResolvedInterface;
 use Nordwerk\WithdrawalBundle\Settings\WithdrawalSettings;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsInsertTag('withdrawal_link')]
 final readonly class WithdrawalLinkInsertTag implements InsertTagResolverNestedResolvedInterface
@@ -19,16 +20,20 @@ final readonly class WithdrawalLinkInsertTag implements InsertTagResolverNestedR
         private RequestStack $requestStack,
         private string $path,
         private WithdrawalSettings|null $settings = null,
+        private TranslatorInterface|null $translator = null,
     ) {
     }
 
     public function __invoke(ResolvedInsertTag $insertTag): InsertTagResult
     {
         $request = $this->requestStack->getCurrentRequest();
-        $label = str_starts_with((string) $request?->getLocale(), 'en') ? 'Withdraw contract' : 'Vertrag widerrufen';
+        $locale = str_starts_with((string) $request?->getLocale(), 'en') ? 'en' : 'de';
+        $label = $this->translator?->trans('withdrawal.link', [], 'messages', $locale) ?? ('en' === $locale ? 'Withdraw contract' : 'Vertrag widerrufen');
         $mainRequest = $this->requestStack->getMainRequest() ?? $request;
         $href = rtrim((string) $mainRequest?->getBasePath(), '/').'/'.ltrim($this->settings?->path() ?? $this->path, '/');
 
-        return new InsertTagResult(\sprintf('<a class="withdrawal-link" href="%s">%s</a>', htmlspecialchars($href, ENT_QUOTES), $label), OutputType::html);
+        // Saving the settings record invalidates this tag, so cached pages pick up a
+        // changed path immediately.
+        return new InsertTagResult(\sprintf('<a class="withdrawal-link" href="%s">%s</a>', htmlspecialchars($href, ENT_QUOTES), htmlspecialchars($label, ENT_QUOTES)), OutputType::html, cacheTags: ['contao.db.tl_withdrawal_settings.1']);
     }
 }

@@ -16,8 +16,12 @@
     "egulias/email-validator": "^4.0",
     "tijsverkoyen/css-to-inline-styles": "^2.4"
   },
+  "require-dev": {
+    "contao/manager-plugin": "^2.0"
+  },
   "conflict": {
-    "contao/core-bundle": "<5.7.12"
+    "contao/core-bundle": "<5.7.12",
+    "contao/manager-plugin": "<2.0 || >=3.0"
   },
   "autoload": {
     "psr-4": {

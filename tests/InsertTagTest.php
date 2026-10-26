@@ -26,5 +26,6 @@ final class InsertTagTest extends TestCase
         $result = $tag(new ResolvedInsertTag('withdrawal_link', new ResolvedParameters([]), []));
         $this->assertStringContainsString('href="/shop/withdrawal"', $result->getValue());
         $this->assertStringContainsString('Withdraw contract', $result->getValue());
+        $this->assertSame(['contao.db.tl_withdrawal_settings.1'], $result->getCacheTags(), 'Saving the settings record must invalidate cached footers.');
     }
 }

@@ -93,8 +93,9 @@ final class MailEditor
     /**
      * @param array<string, mixed>                               $options
      * @param array{subject: string, text: string, html: string} $preview
+     * @param string|null                                        $backUrl Link back to the settings; defaults to $action
      */
-    public static function html(array $options, string $bundle, string $kind, string $locale, string $action, string $requestToken, array $preview, string $notice = '', string $error = ''): string
+    public static function html(array $options, string $bundle, string $kind, string $locale, string $action, string $requestToken, array $preview, string $notice = '', string $error = '', string|null $backUrl = null): string
     {
         $e = static fn (mixed $value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
         $fields = MailOptions::fields($options, $kind, $locale);
@@ -108,13 +109,13 @@ final class MailEditor
         if ('' !== $error) {
             $out .= '<p class="tl_error" role="alert">'.$e($error).'</p>';
         }
-        $out .= '<p><a href="'.$e($action).'">Zurück zu den Einstellungen</a></p><nav aria-label="Mailtyp">';
+        $out .= '<p><a href="'.$e($backUrl ?? $action).'">Zurück zu den Einstellungen</a></p><nav aria-label="Mailtyp">';
 
         foreach ($kinds as $choice) {
             $out .= '<a style="display:inline-block;padding:6px" href="'.$e($action).'&amp;mail='.$e($choice).'&amp;locale='.$e($locale).'">'.$e(str_replace('_', ' ', $choice)).'</a> ';
         }
         $out .= '</nav><p><a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=de">Deutsch</a> · <a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=en">English</a></p>';
-        $url = $action.'&amp;mail='.$e($kind).'&amp;locale='.$e($locale);
+        $url = $e($action).'&amp;mail='.$e($kind).'&amp;locale='.$e($locale);
         $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><input type="hidden" name="REQUEST_TOKEN" value="'.$e($requestToken).'"><fieldset class="tl_tbox"><legend>Absender und Darstellung</legend>';
 
         foreach (['senderName' => 'Absendername', 'senderAddress' => 'Absenderadresse', 'replyTo' => 'Antwort an', 'accent' => 'Akzentfarbe (#RRGGBB)', 'logoPath' => 'Logo unter files/'] as $name => $label) {

@@ -1,4 +1,5 @@
 withdrawal:
+  link: Withdraw contract
   title: Withdraw contract
   intro: "Please provide your name, details of the contract or part of the contract and an email address for confirmation."
   name: Name

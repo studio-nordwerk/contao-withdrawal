@@ -1,4 +1,5 @@
 """Verify the distributable, rather than only the working directory."""
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -10,10 +11,10 @@ import zipfile
 archive = subprocess.check_output(["git", "archive", "--worktree-attributes", "--format=zip", "HEAD"])
 with zipfile.ZipFile(io.BytesIO(archive)) as package:
     names = package.namelist()
-    allowed = ("src/", "Resources/", "config/", "public/", "templates/", "translations/")
+    allowed = ("src/", "contao/", "config/", "public/", "templates/", "translations/")
     leaked = [name for name in names if name not in ("composer.json", "README.md", "LICENSE") and not name.startswith(allowed)]
     assert not leaked, f"Development files in distribution: {leaked}"
-    for required in ["composer.json", "LICENSE", "README.md", "config/services.yaml", "src/ContaoManager/Plugin.php", "public/withdrawal-base.css", "Resources/contao/templates/content_element/withdrawal.html.twig"]:
+    for required in ["composer.json", "LICENSE", "README.md", "config/services.yaml", "src/ContaoManager/Plugin.php", "public/withdrawal-base.css", "contao/templates/content_element/withdrawal.html.twig", "contao/dca/tl_withdrawal_settings.php"]:
         assert required in names, f"Missing runtime file: {required}"
 
 manifest = json.loads(Path("composer.json").read_text())
@@ -24,6 +25,10 @@ assert "356a" in manifest["description"]
 # The Contao Manager compares against 5.7.0 for a root constraint of 5.7.*, so the require must admit 5.7.0; the conflict keeps older 5.7 releases out.
 assert manifest["require"]["contao/core-bundle"] == "^5.7" and manifest["conflict"]["contao/core-bundle"] == "<5.7.12"
 assert "make check" in Path(".github/workflows/check.yaml").read_text()
+# asset('withdrawal-base.css', 'nordwerk_withdrawal') is versioned through public/manifest.json; a stale hash would keep old CSS in browser caches.
+for asset, versioned in json.loads(Path("public/manifest.json").read_text()).items():
+    digest = hashlib.sha256(Path("public", asset).read_bytes()).hexdigest()[:12]
+    assert versioned == f"{asset}?v={digest}", f"public/manifest.json is stale: set {asset!r} to {asset}?v={digest}"
 print(f"Package export verified: {len(names)} entries, no development files.")
 
 with tempfile.TemporaryDirectory(prefix="withdrawal-package-") as directory:

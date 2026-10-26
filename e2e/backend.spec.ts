@@ -4,30 +4,42 @@ import { expect, test } from "@playwright/test";
 
 test("backend withdrawal settings control the public link without environment variables", async ({
   page,
+  request,
 }) => {
   const env = readFileSync(".env", "utf8");
   await page.goto("/contao?do=withdrawal_settings");
   await page.locator("[name=username]").fill(env.match(/^CONTAO_ADMIN_EMAIL=(.*)$/m)![1]);
   await page.locator("[name=password]").fill(env.match(/^CONTAO_ADMIN_PASSWORD=(.*)$/m)![1]);
   await page.locator("button[type=submit],input[type=submit]").first().click();
+  expect(await (await request.get("/home")).text()).toContain('class="withdrawal-link"');
   await page.goto("/contao?do=withdrawal_settings");
+  // The module opens the one settings record in the standard edit form.
+  await expect(page).toHaveURL(/do=withdrawal_settings&act=edit&id=1/);
   const email = await page.locator("#ctrl_merchantEmail").inputValue();
   const path = await page.locator("#ctrl_path").inputValue();
   try {
+    await page.locator("#ctrl_path").fill("/service/widerruf?x=1");
+    await page.locator("#save").click();
+    await expect(page.getByText(/must start with a single \//)).toBeVisible();
     await page.locator("#ctrl_path").fill("/service/widerruf");
-    await page.getByRole("button", { name: "Speichern" }).click();
-    await expect(page.getByText("Einstellungen gespeichert.")).toBeVisible();
+    await page.locator("#save").click();
+    await expect(page.locator(".tl_error")).toHaveCount(0);
+    await expect(page.locator("#ctrl_path")).toHaveValue("/service/widerruf");
     await page.goto("/home");
     await expect(page.getByRole("link", { name: "Vertrag widerrufen" })).toHaveAttribute(
       "href",
       "/service/widerruf",
     );
+    // Anonymous visitors get the page from the page cache (prod); saving the record invalidates it.
+    expect(await (await request.get("/home")).text()).toContain('href="/service/widerruf"');
   } finally {
     await page.goto("/contao?do=withdrawal_settings");
     await page.locator("#ctrl_merchantEmail").fill(email);
     await page.locator("#ctrl_path").fill(path);
-    await page.getByRole("button", { name: "Speichern" }).click();
+    await page.locator("#save").click();
+    await expect(page.locator(".tl_error")).toHaveCount(0);
   }
+  expect(await (await request.get("/home")).text()).toContain(`href="${path}"`);
 });
 
 test("untrusted declaration markup is text in frontend and backend", async ({ page }) => {
