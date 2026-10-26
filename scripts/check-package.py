@@ -10,10 +10,10 @@ import zipfile
 archive = subprocess.check_output(["git", "archive", "--worktree-attributes", "--format=zip", "HEAD"])
 with zipfile.ZipFile(io.BytesIO(archive)) as package:
     names = package.namelist()
-    allowed = ("src/", "Resources/", "config/", "public/", "templates/", "translations/")
+    allowed = ("src/", "contao/", "config/", "public/", "templates/", "translations/")
     leaked = [name for name in names if name not in ("composer.json", "README.md", "LICENSE") and not name.startswith(allowed)]
     assert not leaked, f"Development files in distribution: {leaked}"
-    for required in ["composer.json", "LICENSE", "README.md", "config/services.yaml", "src/ContaoManager/Plugin.php", "public/withdrawal-base.css", "Resources/contao/templates/content_element/withdrawal.html.twig"]:
+    for required in ["composer.json", "LICENSE", "README.md", "config/services.yaml", "src/ContaoManager/Plugin.php", "public/withdrawal-base.css", "contao/templates/content_element/withdrawal.html.twig", "contao/dca/tl_withdrawal_settings.php"]:
         assert required in names, f"Missing runtime file: {required}"
 
 manifest = json.loads(Path("composer.json").read_text())
