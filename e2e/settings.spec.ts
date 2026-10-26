@@ -102,6 +102,7 @@ test.describe.serial("settings record", () => {
 
   test("without a record the module creates it with defaults", async ({ page }) => {
     sql("DELETE FROM tl_withdrawal_settings WHERE id = 1");
+    sql("DELETE FROM tl_version WHERE fromTable = 'tl_withdrawal_settings'");
     const env = readFileSync(".env", "utf8");
     await login(page, env.match(/^CONTAO_ADMIN_EMAIL=(.*)$/m)![1]);
     await page.goto("/contao?do=withdrawal_settings");
@@ -115,6 +116,12 @@ test.describe.serial("settings record", () => {
     await page.locator("#save").click();
     await expect(page.locator(".tl_error")).toHaveCount(0);
     expect(sql("SELECT COUNT(*) FROM tl_withdrawal_settings")).toBe("1");
+    // The unconfigured initial state is not a version that could be restored.
+    expect(
+      sql(
+        "SELECT COUNT(*) FROM tl_version WHERE fromTable = 'tl_withdrawal_settings' AND data NOT LIKE '%defaults@example.test%'",
+      ),
+    ).toBe("0");
   });
 
   test("the module permission alone opens the settings and the mail texts", async ({ page }) => {

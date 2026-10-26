@@ -39,11 +39,9 @@ final readonly class SettingsDataContainer
             return;
         }
         // The demo/setup scripts of the shop and seminar packages insert id 1
-        // themselves; only create it on first use here.
-        $this->connection->executeStatement(
-            "INSERT IGNORE INTO tl_withdrawal_settings (id, tstamp, merchantEmail, path) VALUES (1, ?, '', '/withdrawal')",
-            [time()],
-        );
+        // themselves; only create it on first use here. tstamp 0 keeps this unconfigured
+        // state out of the versions, so it cannot be restored later.
+        $this->connection->executeStatement("INSERT IGNORE INTO tl_withdrawal_settings (id, tstamp, merchantEmail, path) VALUES (1, 0, '', '/withdrawal')");
         if (null !== $action) {
             return;
         }
