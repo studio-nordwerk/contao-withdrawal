@@ -9,6 +9,75 @@ namespace Nordwerk\WithdrawalBundle\Mail;
  */
 final class MailEditor
 {
+    private const LABELS = [
+        'de' => [
+            'intro' => 'Pflegbare Texte; feste Pflichtangaben werden beim Versand aus dem Snapshot ergänzt.',
+            'back' => 'Zurück zu den Einstellungen',
+            'kind' => 'Mailtyp',
+            'identity' => 'Absender und Darstellung',
+            'senderName' => 'Absendername',
+            'senderNameHelp' => 'Erscheint als Absender, z. B. der Name des Shops.',
+            'senderAddress' => 'Absenderadresse',
+            'senderAddressHelp' => 'Eine Adresse Ihrer Domain, damit die Mails ankommen (SPF/DKIM).',
+            'replyTo' => 'Antwort an',
+            'replyToHelp' => 'Antworten der Empfänger gehen an diese Adresse.',
+            'accent' => 'Akzentfarbe (#RRGGBB)',
+            'accentHelp' => 'Farbe für Überschriften und Buttons, z. B. #2f5d50.',
+            'logoPath' => 'Logo unter files/',
+            'logoPathHelp' => 'Pfad zu einer Bilddatei, z. B. files/logo.png.',
+            'voice' => 'Anrede',
+            'voiceHelp' => 'Sie oder Du in den Standardtexten.',
+            'saveIdentity' => 'Absender speichern',
+            'subject' => 'Betreff',
+            'preheader' => 'Vorschautext',
+            'introduction' => 'Anrede und Einleitung',
+            'closing' => 'Schlusstext',
+            'greeting' => 'Grußformel',
+            'signature' => 'Signatur',
+            'tokens' => 'Platzhalter:',
+            'default' => 'Standard:',
+            'reset' => 'Auf Standard zurücksetzen',
+            'saveTexts' => 'Texte speichern',
+            'preview' => 'Vorschau mit Beispieldaten',
+            'previewTitle' => 'Mailvorschau',
+            'textPart' => 'Textteil',
+            'test' => 'Testmail an mich senden',
+        ],
+        'en' => [
+            'intro' => 'Editable texts; fixed mandatory information is added from the snapshot when sending.',
+            'back' => 'Back to the settings',
+            'kind' => 'Mail type',
+            'identity' => 'Sender and appearance',
+            'senderName' => 'Sender name',
+            'senderNameHelp' => 'Shown as the sender, e.g. the name of the shop.',
+            'senderAddress' => 'Sender address',
+            'senderAddressHelp' => 'An address of your domain, so the mails arrive (SPF/DKIM).',
+            'replyTo' => 'Reply to',
+            'replyToHelp' => 'Replies of the recipients go to this address.',
+            'accent' => 'Accent colour (#RRGGBB)',
+            'accentHelp' => 'Colour of headlines and buttons, e.g. #2f5d50.',
+            'logoPath' => 'Logo in files/',
+            'logoPathHelp' => 'Path to an image file, e.g. files/logo.png.',
+            'voice' => 'Form of address',
+            'voiceHelp' => 'Formal "Sie" or informal "Du" in the default texts.',
+            'saveIdentity' => 'Save sender',
+            'subject' => 'Subject',
+            'preheader' => 'Preview text',
+            'introduction' => 'Salutation and introduction',
+            'closing' => 'Closing text',
+            'greeting' => 'Greeting',
+            'signature' => 'Signature',
+            'tokens' => 'Placeholders:',
+            'default' => 'Default:',
+            'reset' => 'Reset to default',
+            'saveTexts' => 'Save texts',
+            'preview' => 'Preview with sample data',
+            'previewTitle' => 'Mail preview',
+            'textPart' => 'Text part',
+            'test' => 'Send a test mail to me',
+        ],
+    ];
+
     /**
      * @param array<string, mixed>  $options
      * @param array<string, string> $posted
@@ -91,54 +160,70 @@ final class MailEditor
     }
 
     /**
+     * The editor as Contao backend markup (tl_formbody_edit, widgets, submit
+     * container), in English when the backend runs in English.
+     *
      * @param array<string, mixed>                               $options
-     * @param array{subject: string, text: string, html: string} $preview
-     * @param string|null                                        $backUrl Link back to the settings; defaults to $action
+     * @param array{subject: string, html: string, text: string} $preview
      */
-    public static function html(array $options, string $bundle, string $kind, string $locale, string $action, string $requestToken, array $preview, string $notice = '', string $error = '', string|null $backUrl = null): string
+    public static function html(array $options, string $bundle, string $kind, string $locale, string $action, string $requestToken, array $preview, string $notice = '', string $error = '', string|null $backUrl = null, bool $english = false): string
     {
         $e = static fn (mixed $value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        $t = static fn (string $key): string => self::LABELS[$english ? 'en' : 'de'][$key];
         $fields = MailOptions::fields($options, $kind, $locale);
         $defaults = EditableMail::defaults($kind, $locale, (string) $options['voice']);
         $kinds = EditableMail::kinds($bundle);
-        $labels = ['subject' => 'Betreff', 'preheader' => 'Vorschautext', 'introduction' => 'Anrede und Einleitung', 'closing' => 'Schlusstext', 'greeting' => 'Grußformel', 'signature' => 'Signatur'];
-        $out = '<h2 class="sub_headline">Mailtexte</h2><p>Pflegbare Texte; feste Pflichtangaben werden beim Versand aus dem Snapshot ergänzt.</p>';
+        $url = $e($action).'&amp;mail='.$e($kind).'&amp;locale='.$e($locale);
+        $token = '<input type="hidden" name="REQUEST_TOKEN" value="'.$e($requestToken).'">';
+        $submit = static fn (string $buttons): string => '<div class="tl_formbody_submit"><div class="tl_submit_container">'.$buttons.'</div></div>';
+
+        $out = '<div class="tl_listing_container mail-editor">';
         if ('' !== $notice) {
             $out .= '<p class="tl_confirm">'.$e($notice).'</p>';
         }
         if ('' !== $error) {
             $out .= '<p class="tl_error" role="alert">'.$e($error).'</p>';
         }
-        $out .= '<p><a href="'.$e($backUrl ?? $action).'">Zurück zu den Einstellungen</a></p><nav aria-label="Mailtyp">';
+        $out .= '<p class="tl_help">'.$e($t('intro')).' <a href="'.$e($backUrl ?? $action).'">'.$e($t('back')).'</a></p>';
+        $out .= '<nav class="mail-editor-kinds" aria-label="'.$e($t('kind')).'">';
 
         foreach ($kinds as $choice) {
-            $out .= '<a style="display:inline-block;padding:6px" href="'.$e($action).'&amp;mail='.$e($choice).'&amp;locale='.$e($locale).'">'.$e(str_replace('_', ' ', $choice)).'</a> ';
+            $current = $choice === $kind ? ' aria-current="page"' : '';
+            $out .= '<a class="tl_submit"'.$current.' href="'.$e($action).'&amp;mail='.$e($choice).'&amp;locale='.$e($locale).'">'.$e(str_replace('_', ' ', $choice)).'</a> ';
         }
-        $out .= '</nav><p><a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=de">Deutsch</a> · <a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=en">English</a></p>';
-        $url = $e($action).'&amp;mail='.$e($kind).'&amp;locale='.$e($locale);
-        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><input type="hidden" name="REQUEST_TOKEN" value="'.$e($requestToken).'"><fieldset class="tl_tbox"><legend>Absender und Darstellung</legend>';
+        $out .= '</nav><p class="mail-editor-locales"><a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=de"'.('de' === $locale ? ' aria-current="page"' : '').'>Deutsch</a> · <a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=en"'.('en' === $locale ? ' aria-current="page"' : '').'>English</a></p></div>';
 
-        foreach (['senderName' => 'Absendername', 'senderAddress' => 'Absenderadresse', 'replyTo' => 'Antwort an', 'accent' => 'Akzentfarbe (#RRGGBB)', 'logoPath' => 'Logo unter files/'] as $name => $label) {
-            $out .= '<div class="widget"><label for="mail_'.$e($name).'">'.$label.'</label><input class="tl_text" id="mail_'.$e($name).'" name="'.$e($name).'" value="'.$e($options[$name]).'"></div>';
+        // Sender and appearance
+        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><div class="tl_formbody_edit">'.$token.'<fieldset class="tl_tbox"><legend>'.$e($t('identity')).'</legend><div class="widget-group">';
+
+        foreach (['senderName', 'senderAddress', 'replyTo', 'accent', 'logoPath'] as $name) {
+            $out .= '<div class="widget w50"><h3><label for="mail_'.$name.'">'.$e($t($name)).'</label></h3><input class="tl_text" id="mail_'.$name.'" name="'.$name.'" value="'.$e($options[$name]).'"><p class="tl_help tl_tip">'.$e($t($name.'Help')).'</p></div>';
         }
-        $out .= '<div class="widget"><label for="mail_voice">Anrede</label><select id="mail_voice" name="voice"><option value="sie"'.('sie' === $options['voice'] ? ' selected' : '').'>Sie</option><option value="du"'.('du' === $options['voice'] ? ' selected' : '').'>Du</option></select></div><button class="tl_submit" name="mailAction" value="identity">Absender speichern</button></fieldset></form>';
-        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><input type="hidden" name="REQUEST_TOKEN" value="'.$e($requestToken).'"><fieldset class="tl_tbox"><legend>'.$e($kind).' · '.$e($locale).'</legend>';
+        $out .= '<div class="widget w50"><h3><label for="mail_voice">'.$e($t('voice')).'</label></h3><select class="tl_select" id="mail_voice" name="voice"><option value="sie"'.('sie' === $options['voice'] ? ' selected' : '').'>Sie</option><option value="du"'.('du' === $options['voice'] ? ' selected' : '').'>Du</option></select><p class="tl_help tl_tip">'.$e($t('voiceHelp')).'</p></div>';
+        $out .= '</div></fieldset></div>'.$submit('<button class="tl_submit" name="mailAction" value="identity">'.$e($t('saveIdentity')).'</button>').'</form>';
+
+        // Texts of the chosen mail
+        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><div class="tl_formbody_edit">'.$token.'<input type="hidden" name="mailAction" value="save"><fieldset class="tl_tbox"><legend>'.$e(str_replace('_', ' ', $kind)).' · '.$e($locale).'</legend><div class="widget-group">';
 
         foreach (EditableMail::FIELDS as $field) {
-            $out .= '<div class="widget" style="margin-bottom:18px"><label for="mail_'.$field.'"><strong>'.$labels[$field].'</strong></label><textarea class="tl_textarea" id="mail_'.$field.'" name="'.$field.'" rows="'.('introduction' === $field || 'closing' === $field ? 5 : 2).'">'.$e($fields[$field]).'</textarea><div>Platzhalter: ';
+            $out .= '<div class="widget clr"><h3><label for="mail_'.$field.'">'.$e($t($field)).'</label></h3><textarea class="tl_textarea" style="height:auto" id="mail_'.$field.'" name="'.$field.'" rows="'.('introduction' === $field || 'closing' === $field ? 5 : 2).'">'.$e($fields[$field]).'</textarea>';
+            $out .= '<p class="tl_help">'.$e($t('tokens')).' ';
 
-            foreach (EditableMail::tokens($kind) as $token) {
-                $out .= '<button type="button" class="mail-token" data-target="mail_'.$field.'" data-token="'.$e('{{ '.$token.' }}').'">'.$e('{{ '.$token.' }}').'</button> ';
+            foreach (EditableMail::tokens($kind) as $placeholder) {
+                $out .= '<button type="button" class="mail-token" data-target="mail_'.$field.'" data-token="'.$e('{{ '.$placeholder.' }}').'">'.$e('{{ '.$placeholder.' }}').'</button> ';
             }
-            $out .= '</div><small>Standard: '.$e($defaults[$field]).'</small><div><button class="tl_submit" name="resetField" value="'.$field.'" formaction="'.$url.'" onclick="this.form.mailAction.value=\'reset\'">Auf Standard zurücksetzen</button></div></div>';
+            $out .= '<br>'.$e($t('default')).' '.$e($defaults[$field]).' <button class="mail-reset" name="resetField" value="'.$field.'" onclick="this.form.mailAction.value=\'reset\'">'.$e($t('reset')).'</button></p></div>';
         }
-        $out .= '<input type="hidden" name="mailAction" value="save"><button class="tl_submit" type="submit">Texte speichern</button></fieldset></form>';
+        $out .= '</div></fieldset></div>'.$submit('<button class="tl_submit" type="submit">'.$e($t('saveTexts')).'</button>').'</form>';
+
+        // Preview and test mail
         $previewHtml = $preview['html'];
         if ('' !== (string) $options['logoPath']) {
             $previewHtml = str_replace('cid:nw-logo', '/'.str_replace('%2F', '/', rawurlencode((string) $options['logoPath'])), $previewHtml);
         }
-        $out .= '<h3>Vorschau mit Beispieldaten</h3><p><strong>'.$e($preview['subject']).'</strong></p><iframe title="Mailvorschau" style="width:100%;height:650px;border:1px solid #ddd" srcdoc="'.$e($previewHtml).'"></iframe><details><summary>Textteil</summary><pre>'.$e($preview['text']).'</pre></details>';
-        $out .= '<form method="post" action="'.$url.'"><input type="hidden" name="REQUEST_TOKEN" value="'.$e($requestToken).'"><button class="tl_submit" name="mailAction" value="test">Testmail an mich senden</button></form>';
+        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><div class="tl_formbody_edit">'.$token.'<fieldset class="tl_tbox"><legend>'.$e($t('preview')).'</legend><div class="widget clr"><p><strong>'.$e($preview['subject']).'</strong></p><iframe title="'.$e($t('previewTitle')).'" style="width:100%;height:650px;border:1px solid var(--border, #ddd);background:#fff" srcdoc="'.$e($previewHtml).'"></iframe><details><summary>'.$e($t('textPart')).'</summary><pre>'.$e($preview['text']).'</pre></details></div></fieldset></div>';
+        $out .= $submit('<button class="tl_submit" name="mailAction" value="test">'.$e($t('test')).'</button>').'</form>';
+        $out .= '<style>.mail-editor{padding:12px 18px}.mail-editor-kinds{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 6px}.mail-editor-kinds [aria-current]{font-weight:600}.mail-editor-locales [aria-current]{font-weight:600}.mail-editor a:not(.tl_submit){text-decoration:underline}.mail-token,.mail-reset{margin:2px 2px 0 0;padding:1px 6px;font:inherit;font-size:.9em;cursor:pointer}</style>';
         $out .= '<script>document.querySelectorAll(".mail-token").forEach(button=>button.addEventListener("click",()=>{const field=document.getElementById(button.dataset.target);const pos=field.selectionStart;field.setRangeText(button.dataset.token,pos,field.selectionEnd,"end");field.focus()}));</script>';
 
         return $out;
