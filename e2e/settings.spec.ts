@@ -133,15 +133,20 @@ test.describe.serial("settings record", () => {
     await expect(page).toHaveURL(/key=mails/);
     await expect(page.locator("[name=subject]")).toBeVisible();
     await page.locator("[name=senderName]").fill("Editor Shop");
-    await page.getByRole("button", { name: "Absender speichern" }).click();
+    const posted = page.waitForResponse((response) => response.request().method() === "POST");
+    await page.getByRole("button", { name: "Save sender" }).click();
+    // Like every Contao form: a redirect after saving, so Turbo shows the result.
+    expect((await posted).status()).toBe(303);
+    await expect(page).toHaveURL(/key=mails.*done=saved/);
     await expect(page.getByText("Mail settings saved.")).toBeVisible();
+    await expect(page.locator(".tl_formbody_edit .widget.w50").first()).toBeVisible();
     expect(sql("SELECT mailOptions FROM tl_withdrawal_settings WHERE id = 1")).toContain(
       "Editor Shop",
     );
     // Links of earlier releases still lead to the mail texts.
     await page.goto("/contao?do=withdrawal_settings&mail=withdrawal_merchant&locale=en");
     await expect(page).toHaveURL(/key=mails&mail=withdrawal_merchant&locale=en/);
-    await page.getByRole("link", { name: "Zurück zu den Einstellungen" }).click();
+    await page.getByRole("link", { name: "Back to the settings" }).click();
     await expect(page).toHaveURL(/act=edit&id=1/);
   });
 
