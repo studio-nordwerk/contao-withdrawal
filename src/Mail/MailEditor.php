@@ -42,6 +42,22 @@ final class MailEditor
             'previewTitle' => 'Mailvorschau',
             'textPart' => 'Textteil',
             'test' => 'Testmail an mich senden',
+            'kind.shop_payment_reminder' => 'Zahlungserinnerung',
+            'kind.shop_customer' => 'Bestellbestätigung',
+            'kind.shop_merchant' => 'Info an Händler',
+            'kind.shop_paid' => 'Zahlungseingang',
+            'kind.shop_dispatched' => 'Versandbestätigung',
+            'kind.shop_canceled' => 'Storno',
+            'kind.seminar_payment_reminder' => 'Zahlungserinnerung',
+            'kind.seminar_confirmation' => 'Buchungsbestätigung',
+            'kind.seminar_merchant' => 'Info an Anbieter',
+            'kind.seminar_waiting' => 'Warteliste',
+            'kind.seminar_promotion' => 'Platz frei',
+            'kind.seminar_reminder' => 'Erinnerung',
+            'kind.seminar_canceled' => 'Absage',
+            'kind.seminar_certificate' => 'Teilnahmebestätigung',
+            'kind.withdrawal_consumer' => 'Eingangsbestätigung',
+            'kind.withdrawal_merchant' => 'Info an Händler',
         ],
         'en' => [
             'intro' => 'Editable texts; fixed mandatory information is added from the snapshot when sending.',
@@ -75,6 +91,22 @@ final class MailEditor
             'previewTitle' => 'Mail preview',
             'textPart' => 'Text part',
             'test' => 'Send a test mail to me',
+            'kind.shop_payment_reminder' => 'Payment reminder',
+            'kind.shop_customer' => 'Order confirmation',
+            'kind.shop_merchant' => 'Note to merchant',
+            'kind.shop_paid' => 'Payment received',
+            'kind.shop_dispatched' => 'Dispatch confirmation',
+            'kind.shop_canceled' => 'Cancellation',
+            'kind.seminar_payment_reminder' => 'Payment reminder',
+            'kind.seminar_confirmation' => 'Booking confirmation',
+            'kind.seminar_merchant' => 'Note to provider',
+            'kind.seminar_waiting' => 'Waiting list',
+            'kind.seminar_promotion' => 'Place available',
+            'kind.seminar_reminder' => 'Reminder',
+            'kind.seminar_canceled' => 'Cancellation',
+            'kind.seminar_certificate' => 'Certificate of attendance',
+            'kind.withdrawal_consumer' => 'Receipt confirmation',
+            'kind.withdrawal_merchant' => 'Note to merchant',
         ],
     ];
 
@@ -189,7 +221,7 @@ final class MailEditor
 
         foreach ($kinds as $choice) {
             $current = $choice === $kind ? ' aria-current="page"' : '';
-            $out .= '<a class="tl_submit"'.$current.' href="'.$e($action).'&amp;mail='.$e($choice).'&amp;locale='.$e($locale).'">'.$e(str_replace('_', ' ', $choice)).'</a> ';
+            $out .= '<a class="tl_submit"'.$current.' href="'.$e($action).'&amp;mail='.$e($choice).'&amp;locale='.$e($locale).'">'.$e($t('kind.'.$choice)).'</a> ';
         }
         $out .= '</nav><p class="mail-editor-locales"><a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=de"'.('de' === $locale ? ' aria-current="page"' : '').'>Deutsch</a> · <a href="'.$e($action).'&amp;mail='.$e($kind).'&amp;locale=en"'.('en' === $locale ? ' aria-current="page"' : '').'>English</a></p></div>';
 
@@ -203,7 +235,7 @@ final class MailEditor
         $out .= '</div></fieldset></div>'.$submit('<button class="tl_submit" name="mailAction" value="identity">'.$e($t('saveIdentity')).'</button>').'</form>';
 
         // Texts of the chosen mail
-        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><div class="tl_formbody_edit">'.$token.'<input type="hidden" name="mailAction" value="save"><fieldset class="tl_tbox"><legend>'.$e(str_replace('_', ' ', $kind)).' · '.$e($locale).'</legend><div class="widget-group">';
+        $out .= '<form class="tl_form tl_edit_form" method="post" action="'.$url.'"><div class="tl_formbody_edit">'.$token.'<input type="hidden" name="mailAction" value="save"><fieldset class="tl_tbox"><legend>'.$e($t('kind.'.$kind)).' · '.$e($locale).'</legend><div class="widget-group">';
 
         foreach (EditableMail::FIELDS as $field) {
             $out .= '<div class="widget clr"><h3><label for="mail_'.$field.'">'.$e($t($field)).'</label></h3><textarea class="tl_textarea" style="height:auto" id="mail_'.$field.'" name="'.$field.'" rows="'.('introduction' === $field || 'closing' === $field ? 5 : 2).'">'.$e($fields[$field]).'</textarea>';
