@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Nordwerk\WithdrawalBundle\Tests;
 
+use Nordwerk\WithdrawalBundle\Mail\EditableMail;
+use Nordwerk\WithdrawalBundle\Mail\MailEditor;
+use Nordwerk\WithdrawalBundle\Mail\MailOptions;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
@@ -17,6 +20,24 @@ final class LabelsAndMailTest extends TestCase
         $messages = Yaml::parseFile(__DIR__.'/../translations/messages.de.yaml');
         $this->assertSame('Vertrag widerrufen', $messages['withdrawal']['title']);
         $this->assertSame('Widerruf bestätigen', $messages['withdrawal']['confirm']);
+    }
+
+    public function testEveryMailTypeHasAReadableNameInTheEditor(): void
+    {
+        $preview = ['subject' => '', 'html' => '', 'text' => ''];
+
+        foreach (['shop', 'seminar', 'withdrawal'] as $bundle) {
+            foreach (EditableMail::kinds($bundle) as $kind) {
+                foreach ([false, true] as $english) {
+                    $html = MailEditor::html(MailOptions::defaults(), $bundle, $kind, 'de', 'contao?do=mails', 'token', $preview, english: $english);
+                    $this->assertStringNotContainsString('>'.str_replace('_', ' ', $kind).'<', $html, $kind);
+                    $this->assertStringNotContainsString(str_replace('_', ' ', $kind).' · ', $html, $kind);
+                }
+            }
+        }
+        $seminar = MailEditor::html(MailOptions::defaults(), 'seminar', 'seminar_payment_reminder', 'de', 'contao?do=mails', 'token', $preview);
+        $this->assertStringContainsString('>Zahlungserinnerung<', $seminar);
+        $this->assertStringContainsString('>Buchungsbestätigung<', $seminar);
     }
 
     public function testPartialContractWordingMatchesTheConfirmationInBothLanguages(): void
