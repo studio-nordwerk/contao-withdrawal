@@ -17,6 +17,7 @@
 /phpunit.xml.dist export-ignore
 /playwright.config.ts export-ignore
 /pnpm-lock.yaml export-ignore
+/pnpm-workspace.yaml export-ignore
 /scripts export-ignore
 /tests export-ignore
 /tsconfig.json export-ignore
