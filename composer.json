@@ -34,6 +34,9 @@
     }
   },
   "extra": {
+    "branch-alias": {
+      "dev-main": "1.2.x-dev"
+    },
     "contao-manager-plugin": "Nordwerk\\WithdrawalBundle\\ContaoManager\\Plugin"
   }
 }
