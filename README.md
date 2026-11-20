@@ -96,3 +96,7 @@ Development: copy `.env.example` to `.env`, replace the secret/password, then ru
 ## Lizenz / License
 
 MIT, siehe / see [LICENSE](LICENSE).
+
+## Fehler und Wünsche
+
+Bitte als Issue in [studio-nordwerk/contao-pakete](https://github.com/studio-nordwerk/contao-pakete/issues) melden. Der Quellcode auf GitHub ist ein schreibgeschützter Spiegel; entwickelt wird das Paket intern bei Studio Nordwerk, Pull Requests dort werden nicht übernommen.
