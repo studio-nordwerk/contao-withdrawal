@@ -41,35 +41,9 @@ Mailvorlagen: `@NordwerkWithdrawal/mail/consumer.txt.twig` und `merchant.txt.twi
 
 `Nordwerk\WithdrawalBundle\Event\WithdrawalSubmittedEvent` enthält Datensatz-ID, Erklärung und UTC-Eingang. Das Event läuft nach Speicherung und erstem Mailversuch, nur beim neu angelegten Datensatz. Es ist **kein dauerhaftes Event-Outbox-System**; Abstürze und Listener-Fehler erfordern bei Shop-Anbindungen einen eigenen Abgleich. Listener dürfen keine langen oder unbegrenzten Arbeiten im Request ausführen.
 
-### Entwicklung und Prüfung
+### Veröffentlichung
 
-```sh
-cp .env.example .env
-# APP_SECRET und CONTAO_ADMIN_PASSWORD durch eigene Werte ersetzen
-make up
-make reset && make check
-# Produktionsmodus inklusive echtem Seiten-Cache:
-APP_ENV=prod make reset && APP_ENV=prod make check
-make down
-```
-
-Benötigt Docker Compose, Python 3, Node 24 und `vp` (Vite Plus 1.0.0). `make up` installiert PHP-/Node-Abhängigkeiten und Chromium. `make check` prüft Paketexport, Coding-Standards, Composer, Twig/YAML/Container, PHPStan, PHP-Tests und Playwright. GitHub Actions führt dieselbe Prüfung in `dev` und `prod` aus; der erste entfernte Lauf steht bis zur Veröffentlichung aus.
-
-Demo: `http://localhost:8081/withdrawal`; Mailpit: `http://localhost:8026`. `make reset` verwirft nur die Datenbank dieser Demo auf tmpfs und baut sie neu auf. Keine echten Kundendaten in der Demo verwenden. `.env` und Entwicklungsartefakte werden nicht veröffentlicht; `.gitattributes` schließt Demo, Tests und Entwicklungswerkzeuge aus dem Composer-Export aus.
-
-### Veröffentlichung und ZIP für den Contao Manager
-
-[Roadmap](docs/roadmap.md) und [Auditbericht](docs/audit.md) dokumentieren Befunde, Tests und offene Betriebsfragen. Veröffentlicht auf GitHub und [Packagist](https://packagist.org/packages/nordwerk/contao-withdrawal-bundle).
-
-Ein Manager-Artefakt benötigt eine `composer.json` **im ZIP-Wurzelverzeichnis mit `version`**. Der Build fügt die Versionsangabe nur dem Archiv hinzu; die Composer-Datei für Git/Packagist bleibt ohne fest eingetragene Version. Das folgt der [offiziellen Contao-Anleitung](https://docs.contao.org/5.x/dev/guides/publishing-bundles/).
-
-```sh
-# Erst den gewünschten Release-Stand committen. Beispielversion ersetzen.
-make artifact VERSION=0.1.0
-# Ergebnis: dist/contao-withdrawal-0.1.0.zip, Inhalt aus HEAD
-```
-
-Der Export wird automatisch geprüft. Releases mit Manager-ZIP stehen auf GitHub; Packagist aktualisiert sich über den GitHub-Hook.
+[Roadmap](docs/roadmap.md) und [Auditbericht](docs/audit.md) dokumentieren Befunde, Tests und offene Betriebsfragen. Veröffentlicht auf GitHub und [Packagist](https://packagist.org/packages/nordwerk/contao-withdrawal-bundle). Releases mit Manager-ZIP stehen auf GitHub; Packagist aktualisiert sich über den GitHub-Hook.
 
 ## English
 
@@ -91,7 +65,7 @@ The bundle stores no IP or user agent and logs only record IDs and failure class
 
 German and English text mail templates can be overridden; retain the declaration, identifying details and receipt date/time. `WithdrawalSubmittedEvent` runs after persistence and the first mail attempt. It is synchronous and is not a durable event outbox; integrations need bounded listeners and their own reconciliation after failures.
 
-Development: copy `.env.example` to `.env`, replace the secret/password, then run `make up` and `make reset && make check`. Production checks: `APP_ENV=prod make reset && APP_ENV=prod make check`. The demo uses ports 8081/8026. `make reset` discards its temporary database. GitHub Actions runs `make check` in both modes. Package exports exclude development files. `make artifact VERSION=0.1.0` builds a versioned Manager ZIP from the last commit; choose the intended release version first. Published on GitHub and Packagist; tags `v*` publish the stable channel.
+Published on GitHub and Packagist; tags `v*` publish the stable channel.
 
 ## Lizenz / License
 
